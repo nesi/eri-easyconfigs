@@ -15,8 +15,6 @@ source_urls = ['https://developer.download.nvidia.com/compute/cuda/%(version)s/l
 sources = ['%(namelower)s_%(version)s_' + minor_suffix + '_linux.run']
 checksums = ['9223c4af3aebe4a7bbed9abd9b163b03a1b34b855fbc2b4a0d1b706ac09a5a16']
 
-
-
 modluafooter = """
 append_path("PATH",            "/cm/local/apps/cuda/libs/current/bin")
 append_path("LD_LIBRARY_PATH", "/cm/local/apps/cuda/libs/current/lib64")

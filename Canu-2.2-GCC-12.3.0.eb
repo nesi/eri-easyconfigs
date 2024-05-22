@@ -13,7 +13,7 @@ checksums = ['e4d0c7b82149114f442ccd39e18f7fe2061c63b28d53700ad896e022b73b7404']
 
 easyblock = 'MakeCp'
 
-#builddependencies = [('git','1.6.4','',SYSTEM)]
+# builddependencies = [('git','2.23.3','',SYSTEM)]
 
 dependencies = [
     ('Perl', '5.38.2'),
