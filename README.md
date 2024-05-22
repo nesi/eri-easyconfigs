@@ -14,17 +14,20 @@ eb <themodule.eb>
 
 module use ../agr/scratch/projects/2023-nesi_slurm_testing/bixleym@agresearch.co.nz/easybuildinstall/rocky8/modules/bio`   
 
+push the update with relevant comments
 
-### swirch to apps admin
+
+### switch to apps admin
 `sudo -i -u eri-apps-admin   
 
 source /agr/persist/apps/share/ebinit.sh   
 
-cd /home/eri-apps-admin/eri-easyconfigs`   
+cd /home/eri-apps-admin/eri-easyconfigs`  
 
+pull the repo
+build the new module
 
-#$ cd /path/to/repo
-TODO:
+####TODO:
 fetch/pull updates
 
 ## Mahuika Modules
