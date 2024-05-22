@@ -5,8 +5,9 @@ Current setup is to have one directory for each cluster for easy of transfer bui
 
 ## eRI Modules
 
-#### build as user first
+### build as user first
 `source /agr/persist/apps/share/ebinit.sh   
+
 cd /agr/scratch/projects/2023-nesi_slurm_testing/bixleym@agresearch.co.nz/eri-easyconfigs   
 
 eb <themodule.eb>   
@@ -14,7 +15,7 @@ eb <themodule.eb>
 module use ../agr/scratch/projects/2023-nesi_slurm_testing/bixleym@agresearch.co.nz/easybuildinstall/rocky8/modules/bio`   
 
 
-#### sqirch to apps admin
+### swirch to apps admin
 `sudo -i -u eri-apps-admin   
 
 source /agr/persist/apps/share/ebinit.sh   
