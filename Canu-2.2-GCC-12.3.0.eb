@@ -1,0 +1,37 @@
+name = 'Canu'
+version = '2.2'
+
+homepage = 'https://canu.readthedocs.io'
+description = """Sequence assembler designed for high-noise single-molecule sequencing."""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+
+
+source_urls = ['https://github.com/marbl/canu/releases/download/v%(version)s/']
+sources = ['canu-%(version)s.tar.xz']
+checksums = ['e4d0c7b82149114f442ccd39e18f7fe2061c63b28d53700ad896e022b73b7404']
+
+easyblock = 'MakeCp'
+
+#builddependencies = [('git','1.6.4','',SYSTEM)]
+
+dependencies = [
+    ('Perl', '5.38.2'),
+    ('Java', '20.0.2', '', SYSTEM)
+]
+
+start_dir = 'src'
+
+buildopts = 'TARGET_DIR=$PWD/built'
+
+files_to_copy = ['built/*']
+
+sanity_check_paths = {'dirs':[], 'files': ['bin/canu']}
+
+sanity_check_commands = [
+    "canu -version",
+    "canu -options",
+]
+
+moduleclass = 'bio'
+

@@ -1,0 +1,389 @@
+easyblock = 'PythonBundle'
+
+name = 'JupyterLab'
+version = "2023.11.0"  # NeSI version number so we can release more often than JupyterLab (updating extensions, etc)
+local_labversion = '3.6.3'  # JupyterLab version
+versionsuffix = '-%s' % local_labversion
+
+homepage = 'https://pypi.org/project/jupyterlab/'
+description = """An extensible environment for interactive and reproducible computing, based on the Jupyter Notebook and Architecture."""
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+
+# Force easyblock to set EBPYTHONPREFIXES rather than PYTHONPATH
+multi_deps = {'Python': ['3.11.6']}
+
+dependencies = [
+    ('nodejs', '16.15.1'),  # required for Jupyter Lab extensions
+    ('git', '2.23.3', '', SYSTEM),
+    ('ZeroMQ', '4.3.4'),
+]
+
+source_urls = [PYPI_SOURCE]
+use_pip = True
+sanity_pip_check = True
+#pip_ignore_installed = False  # =False is risky, could delete packages from Python
+use_pip_for_deps = False
+#pip_no_index = False
+download_dep_fail = False
+
+exts_list = [
+    # JupyterLab
+#    ('editables', '0.3', {  # for hatchling
+#        'source_tmpl': SOURCE_PY3_WHL,
+#    }),
+#    ('hatchling', '1.12.2', {  # for jupyter_core
+#        'source_tmpl': SOURCE_PY3_WHL,
+#    }),
+#    ('pathspec', '0.10.3', {  # more recent version for jupyter_core
+#        'source_tmpl': SOURCE_PY3_WHL,
+#    }),
+    ('jupyter_core', '5.5.0', {
+        'patches': ['jupyter_core-5.1.3_set-sys-prefix-for-easybuild.patch'],  # prefer $EBROOTJUPYTERLAB over sys.prefix
+    }),
+    ('sniffio', '1.3.0'),
+    ('anyio', '4.0.0', {  # was 3.6.2
+        "source_tmpl": SOURCE_PY3_WHL,
+    }),
+#    ('setuptools', '66.1.1'),  # more recent version required for jupyter_packaging
+    ('jupyter_packaging', '0.12.3', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('deprecation', '2.1.0'),
+    ('tomlkit', '0.12.3'),
+    ('websocket-client', '1.6.4', {  # was 1.4.2
+        'modulename': 'websocket',
+    }),
+    ('requests-unixsocket', '0.3.0'),
+    ('fastjsonschema', '2.19.0'),  # for nbformat
+    ('hatch_nodejs_version', '0.3.2', {  # for nbformat
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('nbformat', '5.9.2'),  # more recent version required for jupyter_server
+    ('soupsieve', '2.5', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for beautifulsoup4
+    ('beautifulsoup4', '4.12.2', {
+        'modulename': 'bs4',
+    }),  # for nbconvert
+    ('tinycss2', '1.2.1', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for nbconvert
+    ('mistune', '3.0.2', {  # was 2.0.4
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('pandocfilters', '1.5.0', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for nbconvert
+    ('jupyterlab_pygments', '0.2.2', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for nbconvert
+    ('defusedxml', '0.7.1', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for nbconvert
+    ('nbconvert', '7.11.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # more recent version required for jupyter_server
+    ('hatch_jupyter_builder', '0.8.3', {  # for jupyter_server
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('overrides', '7.4.0', {  # for jupyter_server
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('rfc3339_validator', '0.1.4', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for jupyter-events
+    ('rfc3986_validator', '0.1.1', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for jupyter-events
+    ('rpds_py', '0.13.1', {
+        'source_tmpl': '%(name)s-%(version)s-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl',
+        'modulename': 'rpds',
+    }),
+    ('referencing', '0.31.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for jupyter-events
+    ('jupyter_events', '0.9.0'),  # for jupyter-server
+    ('terminado', '0.18.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('jupyter_server_terminals', '0.4.4'),  # for jupyter-server
+    ('jupyter_client', '7.4.9', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('pyzmq', '24.0.1', {
+        'modulename': 'zmq',
+    }),
+#    ('tornado', '6.2'),  # more recent version for jupyter-server
+#    ('traitlets', '5.8.1', {
+#        'source_tmpl': SOURCE_PY3_WHL,
+#    }),
+    ('argon2-cffi-bindings', '21.2.0', {
+        'modulename': '_argon2_cffi_bindings',
+    }),
+    ('argon2_cffi', '23.1.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+        'modulename': 'argon2',
+    }),
+    ('jupyter_server', '2.10.1'),
+    ('Babel', '2.13.1'),
+    ('json5', '0.9.14'),
+    ('webcolors', '1.13', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for jsonschema
+    ('uri_template', '1.3.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for jsonschema
+    ('jsonpointer', '2.4', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for jsonschema
+    ('types_python_dateutil', '2.8.19.14', {
+        'modulename': 'dateutil',
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('arrow', '1.3.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for isoduration
+    ('isoduration', '20.11.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for jsonschema
+    ('fqdn', '1.5.1', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for jsonschema
+    ('jsonschema_specifications', '2023.11.1', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('jsonschema', '4.20.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('requests', '2.31.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('jupyterlab_server', '2.25.1', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('notebook_shim', '0.2.3'),  # for nbclassic
+    ('prometheus_client', '0.19.0', {  # for jupyterhub
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+#    ('python_json_logger', '2.0.7', {  # for nbclassic
+#        'source_tmpl': SOURCE_PY3_WHL,
+#        'modulename': 'pythonjsonlogger',
+#    }),
+    ('Send2Trash', '1.8.2', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('nbclassic', '1.0.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('notebook', '6.5.6', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('y_py', '0.6.2', {
+        'source_tmpl': '%(name)s-%(version)s-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl',
+    }),
+    ('jupyter_ydoc', '0.2.5', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('aiosqlite', '0.19.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('aiofiles', '22.1.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('ypy_websocket', '0.8.4', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('jupyter_server_fileid', '0.9.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('jupyter_server_ydoc', '0.8.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    (name, local_labversion, {
+        'patches': ['jupyterlab-3.3.3_set-app-path-for-easybuild.patch'],  # prefer $EBROOTJUPYTERLAB over sys.prefix
+        'source_tmpl': SOURCELOWER_TAR_GZ,
+    }),
+
+    # extensions
+    ('async-timeout', '4.0.3'),
+    ('multidict', '6.0.4'),
+    ('yarl', '1.9.2'),
+    ('aiosignal', '1.3.1'),  # for aiohttp
+    ('charset-normalizer', '3.3.2'),  # for aiohttp
+    ('frozenlist', '1.4.0'),  # for aiohttp
+    ('aiohttp', '3.8.6'),
+    ('simpervisor', '1.0.0'),
+    ('jupyter_server_proxy', '4.1.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('ipympl', '0.9.3', {
+        "source_tmpl": SOURCE_WHL,
+    }),
+    ('jupyterlab_hide_code', '3.6.3'),
+    ('jupyterlab-topbar', '0.6.1', {
+        'modulename': 'os',  # not really a python module
+    }),
+    ('jupyter_server_mathjax', '0.2.6'),  # for nbdime
+    ('colorama', '0.4.6'),  # for nbdime
+    ('nbdime', '3.2.1'),  # for jupyterlab-git
+    ('jupyterlab_git', '0.44.0'),
+    ('jlab_enhanced_launcher', '3.2.0'),
+#    ('widgetsnbextension', '4.0.5'),  # more recent version for ipywidgets
+    ('jupyterlab_widgets', '3.0.7'),  # to get the @jupyter-widgets/jupyterlab-manager extension
+    ('ipywidgets', '8.0.6'),
+    ('plotly', '5.14.1'),  # needs to be here even if plotly is already in the Python module
+    ('pyviz_comms', '2.2.1', {  # must be here to build JupyterLab extension
+        'source_tmpl': SOURCE_WHL,
+    }),
+
+    # JupyterHub
+    ('async_generator', '1.10'),
+    ('python-editor', '1.0.4', {
+        "modulename": "editor",
+    }),
+    ('alembic', '1.12.1'),
+#    ('semantic_version', '2.10.0'),
+    ('cryptography', '39.0.0', {
+        "source_tmpl": "%(name)s-%(version)s-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    }),
+    ('pyOpenSSL', '23.0.0', {
+        "source_tmpl": SOURCE_PY3_WHL,
+        "modulename": "OpenSSL",
+    }),
+    ('certipy', '0.1.3'),
+    ('ruamel.yaml.clib', '0.2.8', {
+        "modulename": "_ruamel_yaml",
+    }),
+    ('ruamel.yaml', '0.18.5'),
+    ('python-json-logger', '2.0.7', {
+        "modulename": "pythonjsonlogger",
+    }),
+    ('jupyter_telemetry', '0.1.0'),
+#    ('oauthlib', '3.2.2'),
+    ('pamela', '1.1.0'),
+    ('jupyterhub', '2.3.1'),
+
+    # NeSI Jupyter helpers
+#    ('pockets', '0.9.1'),
+#    ('sphinxcontrib-napoleon', '0.7+master', {  # this package should be deprecated and defopt should use sphinx.ext.napolean instead
+#        'source_urls': ['https://github.com/sphinx-contrib/napoleon/archive/'],
+#        'source_tmpl': 'dce30797b7a229ccebda4030f65482d501427794.tar.gz',
+#        'modulename': 'sphinxcontrib.napoleon',  # in the meantime need master branch version to support Python 3.10
+#    }),
+#    ('docutils', '0.19'),
+#    ('defopt', '6.4.0'),
+    ('nesi_jupyter_helpers', '0.3.1', {
+        'source_urls': ['https://github.com/nesi/nesi_jupyter_helpers/archive/refs/tags/'],
+        'source_tmpl': 'v%(version)s.tar.gz',
+    }),
+    # RStudio on NeSI
+    ('rstudio_on_nesi', '0.24.0', {
+        'source_urls': ['https://github.com/nesi/rstudio_on_nesi/archive/refs/tags/'],
+        'source_tmpl': 'v%(version)s.tar.gz',
+    }),
+
+    # NeSI Virtual Desktops
+    ('nesi-virtual-desktops', '2.4.3', {
+        'source_urls': ['https://github.com/nesi/nesi-virtual-desktops/archive/refs/tags/'],
+        'source_tmpl': 'v%(version)s.tar.gz',
+        'modulename': 'jupyter_proxy_vdt',
+    }),
+
+    # Slurm time remaining
+    ('jupyterlab_slurm_time', '0.2.1', {
+        'source_urls': ['https://github.com/nesi/jupyterlab_slurm_time/releases/download/v%(version)s/'],
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+
+    # Jupyter MATLAB proxy
+    ('jupyter_contrib_core', '0.4.2'),  # for jupyter-contrib-nbextensions
+    ('ipython_genutils', '0.2.0', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for jupyter-contrib-nbextensions
+    ('jupyter_highlight_selected_word', '0.2.0', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for jupyter-contrib-nbextensions
+    ('jupyter_latex_envs', '1.4.6', {
+        'modulename': 'latex_envs',
+        'patches': ['jupyter_latex_envs-1.4.6_template_paths.patch'],
+    }),  # for jupyter-contrib-nbextensions
+    ('jupyter_nbextensions_configurator', '0.6.1'),  # for jupyter-contrib-nb-extensions
+    ('jupyter_contrib_nbextensions', '0.7.0'),
+    ('matlab_proxy', '0.2.7', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for jupyter-matlab-proxy
+    ('jupyter-matlab-proxy', '0.4.1', {
+        'source_urls': ['https://github.com/nesi/jupyter-matlab-proxy/archive/refs/tags/'],
+        'source_tmpl': 'v%(version)s.tar.gz',
+        'modulename': 'jupyter_matlab_proxy',
+}),
+
+    # NERSC jupyterlab_slurm with NeSI logo
+    ('jupyterlab_slurm', '103.0.2', {
+        'source_urls': ['https://github.com/chrisdjscott/jupyterlab-slurm/releases/download/v%(version)s/'],
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+
+    # other jupyter related tools
+    ('textwrap3', '0.9.2', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for ansiwrap
+    ('ansiwrap', '0.8.4', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for papermill
+    ('nbclient', '0.9.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),  # for papermill
+    ('papermill', '2.5.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('tokenize_rt', '5.2.0', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for nbqa
+    ('tomli', '2.0.1', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('autopep8', '2.0.4', {
+        'source_tmpl': SOURCE_WHL,
+    }),  # for nbqa
+    ('nbqa', '1.7.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+]
+
+allow_prepend_abs_path = True
+local_custom_kernels = '/opt/nesi/CS400_centos7_bdw/Jupyter/mahuika-jupyter-kernels/'
+modextrapaths = {
+    'JUPYTER_PATH': local_custom_kernels + '/share/jupyter',
+    'PATH': local_custom_kernels + '/bin',
+}
+
+modextravars = {
+    'JUPYTERLAB_DIR': "%(installdir)s/share/jupyter/lab/",  # install jupyter lab extensions here
+    'JUPYTER': '%(installdir)s/bin/jupyter',
+}
+
+postinstallcmds = [
+"""
+cat > %(installdir)s/bin/jupyter-compute <<"EOF"
+#!/usr/bin/bash
+port=${1:-15051}
+echo "Jupyter lab will be started on $(hostname) and establish port forwarding from $SLURM_SUBMIT_HOST on port $port"
+ssh -N -R ${port}:localhost:${port} $SLURM_SUBMIT_HOST &
+XDG_RUNTIME_DIR="" jupyter lab --port ${port} --no-browser ${@:2}
+EOF
+chmod +x %(installdir)s/bin/jupyter-compute""",
+]
+
+sanity_check_paths = {
+    'files': ['bin/jupyter', 'bin/jupyter-lab'],
+    'dirs': ['bin', 'lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'tools'
+
+
+
+
+
