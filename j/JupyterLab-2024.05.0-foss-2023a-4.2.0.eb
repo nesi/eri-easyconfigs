@@ -228,7 +228,7 @@ exts_list = [
     ('colorama', '0.4.6'),  # for nbdime
     ('nbdime', '3.2.1'),  # for jupyterlab-git
     ('jupyterlab_git', '0.44.0'),
-    ('jlab_enhanced_launcher', '3.2.0'),
+#    ('jlab_enhanced_launcher', '3.2.0'),
 #    ('widgetsnbextension', '4.0.5'),  # more recent version for ipywidgets
     ('jupyterlab_widgets', '3.0.7'),  # to get the @jupyter-widgets/jupyterlab-manager extension
     ('ipywidgets', '8.0.6'),
@@ -372,10 +372,22 @@ exts_list = [
     ('nbqa', '1.7.0', {
         'source_tmpl': SOURCE_PY3_WHL,
     }),
+    ('jupyterlab_topbar_text', '1.0.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('jupyterlab_theme_toggler', '1.0.0', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('jupyterlab_new_launcher','0.4.2', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
+    ('topbar_hub_buttons','0.2.1', {
+        'source_tmpl': SOURCE_PY3_WHL,
+    }),
 ]
 
 allow_prepend_abs_path = True
-local_custom_kernels = '/opt/nesi/CS400_centos7_bdw/Jupyter/mahuika-jupyter-kernels/'
+local_custom_kernels = '/agr/persist/apps/eri_rocky8/software/Jupyter/eri-jupyter-kernels/'
 modextrapaths = {
     'JUPYTER_PATH': local_custom_kernels + '/share/jupyter',
     'PATH': local_custom_kernels + '/bin',
