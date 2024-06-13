@@ -1,0 +1,26 @@
+--- jupyter_core/paths.py.orig	2021-04-12 16:25:16.496147000 +1200
++++ jupyter_core/paths.py	2021-04-12 16:22:47.715030154 +1200
+@@ -129,7 +129,7 @@
+         "/usr/share/jupyter",
+     ]
+ 
+-ENV_JUPYTER_PATH = [os.path.join(sys.prefix, 'share', 'jupyter')]
++ENV_JUPYTER_PATH = [os.path.join(os.environ.get('EBROOTJUPYTERLAB', sys.prefix), 'share', 'jupyter')]
+ 
+ 
+ def jupyter_path(*subdirs):
+@@ -191,12 +191,12 @@
+         "/etc/jupyter",
+     ]
+ 
+-ENV_CONFIG_PATH = [os.path.join(sys.prefix, 'etc', 'jupyter')]
++ENV_CONFIG_PATH = [os.path.join(os.environ.get('EBROOTJUPYTERLAB', sys.prefix), 'etc', 'jupyter')]
+ 
+ 
+ def jupyter_config_path():
+     """Return the search path for Jupyter config files as a list.
+-    
++
+     If the JUPYTER_PREFER_ENV_PATH environment variable is set, the environment-level
+     directories will have priority over user-level directories.
+     """

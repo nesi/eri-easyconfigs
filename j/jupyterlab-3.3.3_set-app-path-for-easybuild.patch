@@ -1,0 +1,11 @@
+--- jupyterlab/commands.py.orig	2022-04-10 22:56:50.757248000 +0000
++++ jupyterlab/commands.py	2022-04-10 22:51:05.892320817 +0000
+@@ -161,7 +161,7 @@
+         return str(Path(os.environ["JUPYTERLAB_DIR"]).resolve())
+ 
+     # Use the default locations for data_files.
+-    app_dir = pjoin(sys.prefix, "share", "jupyter", "lab")
++    app_dir = pjoin(os.environ.get('EBROOTJUPYTERLAB', sys.prefix), 'share', 'jupyter', 'lab')
+ 
+     # Check for a user level install.
+     # Ensure that USER_BASE is defined
