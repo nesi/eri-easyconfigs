@@ -384,6 +384,9 @@ exts_list = [
     ('topbar_hub_buttons','0.2.1', {
         'source_tmpl': SOURCE_PY3_WHL,
     }),
+    ('bash_kernel','0.9.3', {
+#        'source_tmpl': SOURCE_PY3_WHL,
+    }),
 ]
 
 allow_prepend_abs_path = True
