@@ -50,6 +50,9 @@ exts_list = [
         'source_urls': ['http://pypi.python.org/packages/source/M/Mako/'],
         'modulename': 'mako',
     }),
+    ('wheel', '0.43.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/w/wheel/'],
+    }),
 ]
 
 moduleclass = 'lang'
