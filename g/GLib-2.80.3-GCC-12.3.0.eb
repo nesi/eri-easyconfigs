@@ -1,0 +1,40 @@
+easyblock = 'MesonNinja'
+
+name = 'GLib'
+version = '2.78.1'
+
+homepage = 'http://www.gtk.org/'
+description = """GLib is one of the base libraries of the GTK+ project"""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+toolchainopts = {'pic': True}
+
+source_urls = [FTPGNOME_SOURCE]
+sources = [SOURCELOWER_TAR_XZ]
+checksums = ['915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2']
+
+builddependencies = [
+    ('Meson', '0.62.1', '', SYSTEM),
+    ('Ninja', '1.11.1', '', SYSTEM),
+]
+
+dependencies = [
+    ('libffi', '3.4.6','',SYSTEM),
+    ('gettext', '0.21'),
+    ('libxml2', '2.11.4'),
+    ('PCRE2', '10.42'),
+]
+
+# avoid using hardcoded path to Python binary in build step
+preconfigopts = "export PYTHON=python && "
+
+configopts = "--buildtype=release --default-library=both "
+
+fix_python_shebang_for = ['bin/*']
+
+sanity_check_paths = {
+    'files': ['lib/libglib-%(version_major)s.0.a', 'lib/libglib-%%(version_major)s.0.%s' % SHLIB_EXT],
+    'dirs': ['bin', 'include'],
+}
+
+moduleclass = 'vis'
