@@ -1,0 +1,42 @@
+--- R/snow.R	2018-09-04 05:09:26.000000000 +1200
++++ R/snow.R	2020-02-13 18:33:49.000000000 +1300
+@@ -41,7 +41,7 @@
+ workLoop <- function(master) {
+     repeat tryCatch({
+         msg <- recvData(master)
+-	cat(paste("Type:", msg$type, "\n"))
++	#cat(paste("Type:", msg$type, "\n"))
+ 
+         if (msg$type == "DONE") {
+             closeNode(master)
+@@ -613,12 +613,27 @@
+ 
+ .onLoad <- function(libname, pkgname) {
+     initDefaultClusterOptions(libname)
+-    if (exists("mpi.comm.size"))
++    if (exists("mpi.comm.size")) {
++        library(Rmpi)
+         type <- "MPI"
++        if (mpi.comm.rank(comm = 0) == 0) {
++            .Last <<- function() {
++                cl <- getMPIcluster()
++                if (! is.null(cl))
++                    stopCluster(cl)
++                mpi.quit()
++             }
++            if (mpi.comm.size(comm = 0) > 1) {
++                makeMPIcluster()
++            }
++        } else {
++            sink(file="/dev/null")
++            workLoop(makeMPImaster())
++            mpi.quit()
++        }
++    }    
+     ## else if (length(find.package("rpvm", quiet = TRUE)) != 0)
+     ##     type <- "PVM"
+-    else if (length(find.package("Rmpi", quiet = TRUE)) != 0)
+-        type <- "MPI"
+     ## else if (length(find.package("nws", quiet = TRUE)) != 0)
+     ##     type <- "NWS"
+     else type <- "SOCK"
