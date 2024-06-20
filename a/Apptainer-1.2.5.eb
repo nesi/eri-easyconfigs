@@ -40,10 +40,6 @@ sanity_check_paths = {
   'dirs': ['.'],
 }
 
-modextravars = {
-                'APPTAINER_BIND':'/opt/nesi,' + '/nesi/project,' + '/nesi/nobackup,' + '/scale_wlg_persistent,' + '/scale_wlg_nobackup',
-        
-}
 
 
 modluafooter = '\nunload("Singularity")\n'
