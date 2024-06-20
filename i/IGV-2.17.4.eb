@@ -15,7 +15,7 @@ sources = ['%(name)s_%(version)s.zip']
 checksums = ['6a36ae64fa3b74182db654a93f6254256305a8afa6b878f381b5d04fc1e8eaa5']
 
 #versionsuffix = '-%s-%s' % (java, javaver)
-dependencies = [('Java','20.0.2','',SYSTEM),]
+dependencies = [('Java','17','',SYSTEM),]
 
 # add the installation dir to PATH
 modextrapaths = {
