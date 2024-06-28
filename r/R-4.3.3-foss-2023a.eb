@@ -102,6 +102,8 @@ exts_list = [
     ('fansi', '1.0.4'),
     ('vctrs', '0.6.3'),
     ('pillar', '1.9.0'),
+    ('evaluate', '0.21'),
+    ('crayon', '1.5.2'),
 
     #IRkernel dependencies    
     ('repr', '1.1.7'),
