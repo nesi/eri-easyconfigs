@@ -1,0 +1,34 @@
+name = 'OpenSSL'
+version = '3.3.1'
+
+homepage = 'https://www.openssl.org/'
+description = """The OpenSSL Project is a collaborative effort to develop a robust, commercial-grade, full-featured,
+ and Open Source toolchain implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) 
+ protocols as well as a full-strength general purpose cryptography library. """
+
+toolchain = {'name': 'GCCcore', 'version': '12.3.0'}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://www.openssl.org/source/']
+sources = [SOURCELOWER_TAR_GZ]
+checksums = ['777cd596284c883375a2a7a11bf5d2786fc5413255efab20c50d6ffe6d020b7e']
+
+dependencies = [
+    ('zlib', '1.2.13'),
+]
+
+builddependencies = [
+    ('binutils', '2.40'),
+]
+
+#Add sanity checks. Otherwise, it will attempt to it based on easyblock directive which
+#will look for engine-1 than engine-3
+sanity_check_paths = {
+    'files': ['bin/openssl'],
+    'dirs': ['bin', 'lib', 'ssl', 'share', 'include', 'lib64'],
+}
+
+
+#runtest = 'test'  # needs a Perl with TAP
+
+moduleclass = 'system'
