@@ -1,0 +1,31 @@
+easyblock = 'Tarball'
+
+name = 'RStudio-Server'
+version = '2024.04.2-764'
+
+homepage = 'https://www.rstudio.com/'
+description = """This is the RStudio Server version."""
+
+toolchain = SYSTEM
+
+# Download the rpm manually from source_urls
+# extract the content of the rpm with "rpm2cpio name.rpm | cpio -idmv"
+# Go to `usr/lib` directory in the extracted folder and rename the rstuio-server directory with the version number
+# and then create a tarball for it with 'tar -zcf'
+# For an example "tar -zcf rstudio-server-2024.04.2-764.tar.gz rstudio-server-2024.04.2-764/"
+source_urls = ['https://posit.co/download/rstudio-server/']
+sources = ['%(namelower)s-%(version)s.tar.gz']
+
+dependencies = [
+    ('R', '4.3.3','',('foss','2023a')),
+]
+
+
+sanity_check_paths = {
+    'files': ['bin/rstudio-server' , 'bin/rserver', 'bin/rserver-pam'],
+    'dirs': ['bin', 'db', 'resources' , 'www'],
+}
+
+#modextrapaths = { 'PATH': 'data' }
+
+moduleclass = 'lang'
