@@ -16,9 +16,10 @@ toolchain = SYSTEM
 source_urls = ['https://posit.co/download/rstudio-server/']
 sources = ['%(namelower)s-%(version)s.tar.gz']
 
-dependencies = [
-    ('R', '4.3.3','',('foss','2023a')),
-]
+#Commeing this out to avoid conflicts in OOD R module selection
+#dependencies = [
+#    ('R', '4.3.3','',('foss','2023a')),
+#]
 
 
 sanity_check_paths = {

@@ -53,6 +53,10 @@ exts_list = [
     ('wheel', '0.43.0', {
         'source_urls': ['https://pypi.python.org/packages/source/w/wheel/'],
     }),
+    ('meson_python', '0.13.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/m/meson-python/'],
+        "source_tmpl": SOURCE_PY3_WHL,
+    }),
 ]
 
 moduleclass = 'lang'

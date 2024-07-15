@@ -1,7 +1,7 @@
 easyblock = 'MesonNinja'
 
 name = 'GLib'
-version = '2.78.1'
+version = '2.80.3'
 
 homepage = 'http://www.gtk.org/'
 description = """GLib is one of the base libraries of the GTK+ project"""
@@ -11,7 +11,7 @@ toolchainopts = {'pic': True}
 
 source_urls = [FTPGNOME_SOURCE]
 sources = [SOURCELOWER_TAR_XZ]
-checksums = ['915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2']
+checksums = ['3947a0eaddd0f3613d0230bb246d0c69e46142c19022f5c4b1b2e3cba236d417']
 
 builddependencies = [
     ('Meson', '0.62.1', '', SYSTEM),
