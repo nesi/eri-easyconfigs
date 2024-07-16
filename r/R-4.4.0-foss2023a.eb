@@ -42,10 +42,10 @@ dependencies = [
     ('LibTIFF', '4.4.0'),  # for ragg (devtools)
 
     # Geo deps:
-    ('GDAL', '3.6.3'),     # for rgdal
-    ('PROJ', '9.2.0'),     # for rgdal. Match version from GDAL.
-    ('GEOS', '3.11.2'),    # for rgeos. Match version from GDAL.
-    ('UDUNITS', '2.2.26'), # for units.
+    ('GDAL', '3.6.4'),     # for rgdal
+    ('PROJ', '9.3.0'),     # for rgdal. Match version from GDAL.
+    ('GEOS', '3.11.3'),    # for rgeos. Match version from GDAL.
+    ('UDUNITS', '2.2.28'), # for units.
 ]
 
 # For Zendesk #36418
