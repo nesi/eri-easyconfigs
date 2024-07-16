@@ -104,27 +104,13 @@ exts_list = [
     ('pillar', '1.9.0'),
     ('evaluate', '0.21'),
     ('crayon', '1.5.2'),
+    ('tinytex', '0.51'),
 
     #IRkernel dependencies    
     ('repr', '1.1.7'),
     ('IRdisplay', '1.1'),
     ('pbdZMQ', '0.3-11'),
     ('uuid', '1.1-1'),
-
-
-    
-
-    # BioConductor dependencies
-    ('BiocManager', '1.30.22'),
-    ('formatR', '1.14'),
-    ('lambda.r', '1.2.4'),
-    ('futile.options', '1.0.1'),
-    ('futile.logger', '1.4.3'),
-    ('perm', '1.0-0.2'),
-    ('gridBase', '0.4-7'),
-    ('registry', '0.5-1'),
-    ('bibtex', '0.5.1'),
-
 
     # devtools
     ('downlit', '0.4.3'),
@@ -148,6 +134,20 @@ exts_list = [
     ('gh', '1.4.0'),
     ('usethis', '2.2.2'),
     ('devtools', '2.4.5'),
+
+    # tidyverse
+    ('tidyverse', '2.0.0'),
+
+    # BioConductor dependencies
+    ('BiocManager', '1.30.22'),
+    ('formatR', '1.14'),
+    ('lambda.r', '1.2.4'),
+    ('futile.options', '1.0.1'),
+    ('futile.logger', '1.4.3'),
+    ('perm', '1.0-0.2'),
+    ('gridBase', '0.4-7'),
+    ('registry', '0.5-1'),
+    ('bibtex', '0.5.1'),
 
 
 
