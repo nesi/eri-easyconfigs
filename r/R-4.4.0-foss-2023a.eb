@@ -1,0 +1,217 @@
+# Built with EasyBuild version 4.8.1 on 2024-03-26
+name = 'R'
+version = '4.4.0'
+
+homepage = 'http://www.r-project.org/'
+description = """R is a free software environment for statistical computing and graphics."""
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+# 'openmp' is enabled in R by default.  As of eb 3.5.0, setting it here breaks the build.
+toolchainopts = {'precise': True, 'opt': True}
+
+sources = [SOURCE_TAR_GZ]
+source_urls = ['http://cran.us.r-project.org/src/base/R-%(version_major)s']
+
+preconfigopts = 'BLAS_LIBS="$LIBBLAS_MT -fopenmp"'  # alas that's not compiler-agnostic
+configopts = "--with-pic --enable-threads --enable-R-shlib"
+configopts += " --with-recommended-packages=no"
+configopts += " --x-libraries=/lib64 --x-includes=/usr/include/X11 --with-x=yes"
+configopts += " --with-cairo --with-jpeglib --with-libtiff"
+# Build all except vignettes, which now fail on Mahuika for some latex reason, with R 4.1.0
+buildopts = 'Makefile Makeconf R docs recommended javaconf'
+
+dependencies = [
+    ('zlib', '1.2.13'),
+    ('bzip2', '1.0.8'),
+    ('XZ', '5.4.2'),
+    ('PCRE2', '10.42'),
+    ('libreadline', '8.2'),
+    ('ncurses', '6.4'),
+    ('libpng', '1.6.40'),  # for plotting
+    ('libxml2', '2.11.4'), # for XML
+    ('SQLite', '3.42.0'),  # for RSQLite
+    ('cURL', '8.3.0'),    # for RCurl
+    ('NLopt', '2.7.1'),    # for nloptr
+    ('GMP', '6.2.1'),      # for rcdd and thus betapart
+    ('Java', '20.0.2', '', SYSTEM), # for JRI/RJI for rJava
+    ('nodejs', '18.18.2'), # for V8 for rstan
+    ('OpenSSL', '1.1','', SYSTEM), # otherwise BioC: rtracklayer.so: undefined symbol: OPENSSL_init_ssl
+    ('libgit2', '1.6.4'),  # For gh (devtools)
+    ('HarfBuzz', '4.4.1'), # (devtools) Use system harfbuzz. Otherwise, --with-cairo will not work
+    ('FriBidi', '1.0.12'), # (devtools) User system fribidi. Otherwise, --with-cairo will not work
+    ('LibTIFF', '4.4.0'),  # for ragg (devtools)
+
+    # Geo deps:
+    ('GDAL', '3.6.4'),     # for rgdal
+    ('PROJ', '9.3.0'),     # for rgdal. Match version from GDAL.
+    ('GEOS', '3.11.3'),    # for rgeos. Match version from GDAL.
+    ('UDUNITS', '2.2.28'), # for units.
+]
+
+#osdependencies = [ 'fribidi' , 'libharfbuzz','libfribidi','libharfbuzz-icu']
+
+
+# For Zendesk #36418
+import os as _os
+if _os.environ.get('USE_TCLTK'):
+    versionsuffix = '-TCLTK'
+    dependencies.extend([
+        ('Tcl', '8.6.10'),
+        ('Tk', '8.6.10'),      # alfo harfbuzz, jpeg, pango, cairo?
+    ])
+
+def _ext_options_extra(**kw):
+    options = {
+        'source_urls': [
+            'http://cran.r-project.org/src/contrib/Archive/%(name)s',  # package archive
+            'http://cran.r-project.org/src/contrib',  # alternative for current packages
+        ],
+        'source_tmpl': '%(name)s_%(version)s.tar.gz',
+    }
+    for (name, value) in kw.items():
+        options[name] = value
+    return options
+
+exts_default_options = _ext_options_extra()
+
+exts_list = [
+    # Note: had to patch .../easybuild/toolchains/mpi/intelmpi.py with eb_intelmpi_mpi_vars.patch
+    # to get MPI_LIB_DIR and MPI_INC_DIR from recent impi.
+    ('Rmpi', '0.7-1', _ext_options_extra(patches=['Rmpi-0.6-impi-2019.patch'])),
+    ('snow', '0.4-4', _ext_options_extra(patches = ['R-snow-4b-MPI.patch'])),
+    ('snowfall', '1.84-6.2'),
+    ('iterators', '1.0.14'),
+    ('codetools', '0.2-19'),
+    ('foreach', '1.5.2'),
+    ('doMPI', '0.2.2'),
+    ('doParallel', '1.0.17'),
+    ('doMC', '1.3.8'),
+    ('rJava', '1.0-6'),
+    ('R6', '2.5.1'),
+    ('ps', '1.7.7'),
+    ('irace', '3.5'),
+    ('lattice', '0.21-8'),
+    ('RColorBrewer', '1.1-3'),
+    ('png', '0.1-8'),
+    ('jpeg', '0.1-10'),
+    ('deldir', '1.0-9'),
+    ('Rcpp', '1.0.11'),
+    ('Matrix', '1.6-1'),
+    ('digest', '0.6.33'),
+    ('backports','1.5.0'),
+    ('rlang', '1.1.1'),
+    ('base64enc', '0.1-3'),
+    ('fastmap', '1.2.0'),
+    ('ellipsis', '0.3.2'),
+    ('htmltools', '0.5.8'), 
+    ('jsonlite', '1.8.7'),
+    ('glue', '1.6.2'),
+    ('cli', '3.6.1'),
+    ('lifecycle', '1.0.3'),
+    ('utf8', '1.2.3'),
+    ('fansi', '1.0.4'),
+    ('vctrs', '0.6.3'),
+    ('pillar', '1.9.0'),
+    ('evaluate', '0.21'),
+    ('crayon', '1.5.2'),
+
+    # IRkernel dependencies    
+    ('repr', '1.1.7'),
+    ('IRdisplay', '1.1'),
+    ('pbdZMQ', '0.3-11'),
+    ('uuid', '1.1-1'),
+
+    # devtools
+    ('cachem','1.1.0'),
+    ('brio','1.1.5'),
+    ('desc','1.4.3'),
+    ('memoise','2.0.1'),
+    ('withr','3.0.0'),
+    ('yaml','2.3.9'),
+    ('downlit', '0.4.3'),
+    ('cpp11','0.4.7'),
+    ('systemfonts', '1.0.4'),
+    ('textshaping', '0.3.6'),
+    ('ragg', '1.2.5'),
+    ('whisker', '0.4.1'),
+    ('jquerylib','0.1.4'),
+    ('mime','0.12'),
+    ('fs','1.6.4'),
+    ('rappdirs', '0.3.3'),
+    ('sass','0.4.9'),
+    ('bslib','0.7.0'),
+    ('processx','3.8.4'),
+    ('callr','3.7.6'),
+    ('curl','5.2.1'),
+    ('sys','3.4.2'),
+    ('askpass','1.2.0'),
+    ('openssl','2.2.0'),
+    ('rmarkdown','2.27'),
+    ('tibble','3.2.1'),
+    ('xml2','1.3.6'),
+    ('pkgdown', '2.0.7'),
+    ('xopen', '1.0.0'),
+    ('sessioninfo', '1.2.2'),
+    ('rcmdcheck', '1.4.0'),
+    ('remotes', '2.4.2.1'),
+    ('roxygen2', '7.2.3'),
+    ('rversions', '2.1.2'),
+    ('urlchecker', '1.0.1'),
+    ('credentials', '1.3.2'),
+    ('gert', '1.9.3'),
+    ('gitcreds', '0.1.2'),
+    ('ini', '0.3.1'),
+    ('ini', '0.3.1'),
+    ('httr2', '0.2.3'),
+    ('gh', '1.4.0'),
+    ('usethis', '2.2.2'),
+    ('devtools', '2.4.5'),
+
+    # Geospatial
+    ('terra', '1.7-39'),
+    ('raster', '3.6-23'),
+    ('dismo', '1.3-14'),
+    ('spData', '2.3.0'),
+    ('rgeos', '0.6-4'),
+    ('spacetime', '1.3-0'),
+    ('units', '0.8-3'),
+    ('wk', '0.7.3'),
+    ('s2', '1.1.4'),
+    ('sf', '1.0-14'),
+    ('sftime', '0.2-0'),
+    ('lwgeom', '0.2-13'),
+    ('stars', '0.6-3'),
+    ('gstat', '2.1-1'),
+    ('spdep', '1.2-8'),
+    ('DCluster', '0.2-8'),
+    ('rgdal', '1.6-7'),
+    ('gdistance', '1.6.4'),
+    ('ipdw', '2.0-0'),
+
+    # tidyverse
+    ('tidyverse', '2.0.0'),
+
+    # BioConductor dependencies
+    ('BiocManager', '1.30.22'),
+    ('formatR', '1.14'),
+    ('lambda.r', '1.2.4'),
+    ('futile.options', '1.0.1'),
+    ('futile.logger', '1.4.3'),
+    ('perm', '1.0-0.2'),
+    ('gridBase', '0.4-7'),
+    ('registry', '0.5-1'),
+    ('bibtex', '0.5.1'),
+
+
+
+]
+
+modluafooter = """
+local userbase = pathJoin(os.getenv("HOME"), "R", "{name}-{version}", "%v")
+setenv("R_LIBS_USER", userbase)
+""".format(**toolchain)
+
+modtclfooter = """
+set userbase "[getenv HOME]/R/{name}-{version}/%v"
+setenv R_LIBS_USER "$userbase"
+""".format(**toolchain)
