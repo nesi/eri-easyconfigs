@@ -1,3 +1,7 @@
+# This installs a minimal version of R
+# login as eri-apps-admin to install.packages() as required
+# see https://github.com/nesi/eri-easyconfigs/issues/3 for install lists and notes
+
 # Built with EasyBuild version 4.8.1 on 2024-03-26
 name = 'R'
 version = '4.4.1'
