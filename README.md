@@ -1,5 +1,6 @@
 # eri-easyconfigs
-![eRI_hex.png](https://github.com/nesi/eri-easyconfigs/blob/main/resources/eri_hex.png)
+<span style="display:block;text-align:center">![eRI_hex.png](https://github.com/nesi/eri-easyconfigs/blob/main/resources/eri_hex.png)</span>
+
 AgR eRI cluster and OnDemand easybuild easyconfig files
 
 ## Workflow
