@@ -1,6 +1,5 @@
 # eri-easyconfigs
-![eRI_hex](https://github.com/user-attachments/assets/f8cea15e-8a6a-4716-8c70-60641f8cce2f)
-
+![eRI_hex](https://github.com/user-attachments/assets/f8cea15e-8a6a-4716-8c70-60641f8cce2f =100x200)
 
 AgR eRI cluster and OnDemand easybuild easyconfig files
 
