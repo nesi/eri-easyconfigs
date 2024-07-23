@@ -1,8 +1,7 @@
 # eri-easyconfigs
 
 <p align="center" width="100%">
-    <img width="32%" src="https://github.com/nesi/eri-easyconfigs/blob/main/resources/eri_hex.png"> 
-"> 
+    <img width="20%" src="https://github.com/nesi/eri-easyconfigs/blob/main/resources/eri_hex.png"> 
 </p>
 
 AgR eRI cluster and OnDemand easybuild easyconfig files
