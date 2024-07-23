@@ -1,4 +1,8 @@
 # eri-easyconfigs
+<p align="center" width="100%">
+    <img width="33%" src="eri_hex.png">
+</p>
+
 AgR eRI cluster and OnDemand easybuild easyconfig files
 
 ## Workflow
