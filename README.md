@@ -1,8 +1,5 @@
 # eri-easyconfigs
-AgR eRI cluster easybuild easyconfig files
-
-RST Wiki with software build notes
-https://nznesi.atlassian.net/wiki/spaces/nesiproj/pages/504037498/Software+installs+on+Mahuika+M+ui+eRI
+AgR eRI cluster and OnDemand easybuild easyconfig files
 
 ## Workflow
 
@@ -41,3 +38,7 @@ fetch/pull updates
 eb foo.eb
 ```
 **DO NOT PUSH TO GIT FROM eri-app-admin**
+
+RST Wiki with more complete software build notes and guides.
+https://nznesi.atlassian.net/wiki/spaces/nesiproj/pages/504037498/Software+installs+on+Mahuika+M+ui+eRI
+
