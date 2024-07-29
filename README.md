@@ -42,7 +42,7 @@ fetch/pull updates
 ```
 eb foo.eb
 ```
-**DO NOT PUSH TO GIT FROM eri-app-admin**
+**DO NOT PUSH TO GIT FROM eri-apps-admin**
 
 RST Wiki with more complete software build notes and guides.
 https://nznesi.atlassian.net/wiki/spaces/nesiproj/pages/504037498/Software+installs+on+Mahuika+M+ui+eRI
