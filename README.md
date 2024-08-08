@@ -47,3 +47,7 @@ eb foo.eb
 RST Wiki with more complete software build notes and guides.
 https://nznesi.atlassian.net/wiki/spaces/nesiproj/pages/504037498/Software+installs+on+Mahuika+M+ui+eRI
 
+### Resources
+tool for simplyfying the update of R and Python modules
+https://github.com/fizwit/easy_update
+
