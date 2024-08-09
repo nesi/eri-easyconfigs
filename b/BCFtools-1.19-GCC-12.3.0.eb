@@ -4,7 +4,7 @@ version = '1.19'
 homepage = 'http://www.htslib.org'
 description = """Manipulate variant calls in the Variant Call Format (VCF) and its binary counterpart BCF."""
 
-toolchain = {'name': 'GCC', 'version': '11.3.0'}
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
 toolchainopts = {'pic': True}
 
 source_urls = ['https://github.com/samtools/%(name)s/releases/download/%(version)s']
