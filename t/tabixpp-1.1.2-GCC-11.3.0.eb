@@ -1,0 +1,39 @@
+easyblock = 'ConfigureMake'
+
+name = 'tabixpp'
+version = '1.1.2'
+
+homepage = 'https://github.com/ekg/tabixpp'
+description = """C++ wrapper to tabix indexer"""
+
+toolchain = {'name': 'GCC', 'version': '11.3.0'}
+
+github_account = 'ekg'
+source_urls = [GITHUB_SOURCE]
+sources = ['v%(version)s.tar.gz']
+patches = ['%(name)s-1.1.2_use-external-HTSlib.patch']
+checksums = [
+    'c850299c3c495221818a85c9205c60185c8ed9468d5ec2ed034470bb852229dc',  # v1.1.0.tar.gz
+    '86086e41e0cd6188ff5841f7ad7891c905cb29bfbca766d96f3bd6788513e68b',  # tabixpp-1.1.2_use-external-HTSlib.patch
+]
+
+builddependencies = [('binutils', '2.38')]
+
+dependencies = [
+    ('zlib', '1.2.11'),
+    ('bzip2', '1.0.8'),
+    ('XZ', '5.2.5'),
+    ('HTSlib', '1.15.1'),
+    ('PCRE', '8.45'),
+]
+
+skipsteps = ['configure']
+
+preinstallopts = 'PREFIX=%(installdir)s'
+
+sanity_check_paths = {
+    'files': ['bin/tabix++', 'lib/libtabixpp.%s' % SHLIB_EXT],
+    'dirs': [],
+}
+
+moduleclass = 'bio'
