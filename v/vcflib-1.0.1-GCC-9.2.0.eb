@@ -1,0 +1,30 @@
+name = 'vcflib'
+version = '1.0.1'
+
+homepage = 'https://github.com/ekg/freebayes/blob/master/README.md'
+description = """Genetic variant detector designed to find polymorphisms smaller than the length of a short-read sequencing alignment."""
+
+toolchain = {'name': 'GCC', 'version': '9.2.0'}
+toolchainopts = {'pic': True, 'opt': True}
+
+source_urls = ['https://github.com/vcflib/vcflib/releases/download/v%(version)s']
+sources = ['%(name)s-%(version)s-src.tar.gz']
+
+easyblock = 'MakeCp'
+
+buildopts = 'C=$CC CXX=$CXX GIT_VERSION=%(version)s'
+
+dependencies = [
+    ('bzip2', '1.0.8'),
+]
+
+files_to_copy = ['bin', 'README.md', 'LICENSE', 'scripts', 'lib']
+
+sanity_check_paths = {
+    'files': ['bin/vcfstreamsort'],
+    'dirs': [],
+}
+
+parallel = 1 
+
+moduleclass = 'bio'
