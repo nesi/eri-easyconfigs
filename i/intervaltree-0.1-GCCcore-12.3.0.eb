@@ -1,0 +1,35 @@
+easyblock = 'ConfigureMake'
+
+name = 'intervaltree'
+version = '0.1'
+
+homepage = 'https://github.com/ekg/intervaltree'
+description = """An interval tree can be used to efficiently find a set of numeric intervals
+ overlapping or containing another interval. This library provides a basic implementation of an
+ interval tree using C++ templates, allowing the insertion of arbitrary types into the tree.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': '12.3.0'}
+
+github_account = 'ekg'
+source_urls = [GITHUB_SOURCE]
+sources = ['v%(version)s.tar.gz']
+patches = ['%(name)s-%(version)s_fix-numeric_limits.patch']
+checksums = [
+    '7ba41f164a98bdcd570f1416fde1634b23d3b0d885b11ccebeec76f58810c307',  # v0.1.tar.gz
+    '6b343013acac9ce4b1c59e8e7dde4a97d319ccfd8715ec459935cd344c24cdf8',  # intervaltree-0.1_fix-numeric_limits.patch
+]
+
+builddependencies = [('binutils', '2.40')]
+
+skipsteps = ['configure']
+
+preinstallopts = 'DESTDIR="" PREFIX=%(installdir)s'
+
+sanity_check_paths = {
+    'files': ['bin/interval_tree_test', 'include/intervaltree/IntervalTree.h'],
+    'dirs': [],
+}
+sanity_check_commands = ["interval_tree_test"]
+
+moduleclass = 'lib'
