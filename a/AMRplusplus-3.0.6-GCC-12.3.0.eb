@@ -1,0 +1,69 @@
+easyblock = 'CmdCp'
+
+name = 'AMRplusplus'
+version = '3.0.6'
+
+homepage = 'https://megares.meglab.org/amrplusplus/latest/html/v2'
+description = """AmrPlusPlus v2.0 can process the raw data from the sequencer,
+identify the fragments of DNA, and count them. It also provides a count of the
+polymorphisms that occur in each DNA fragment with respect to the reference database.
+"""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+
+source_urls = ['https://github.com/Microbial-Ecology-Group/AMRplusplus/archive/refs/tags']
+sources = ['v%(version)s.zip']
+checksums = ['6807b4c3b7f758a13facc39fec690909b6f60cc23a633f421fafe30efa5430af']
+
+dependencies = [
+    ('Java', '20.0.2', '', SYSTEM),
+    ('BWA', '0.7.18'),
+    ('Trimmomatic', '0.39', '-Java-20.0.2', SYSTEM),
+    ('SAMtools', '1.19'),
+    ('Nextflow', '24.04.2', '', SYSTEM),
+]
+
+local_exe_files = [
+    'main_AMR++.nf',
+    'run_AMR++_slurm.sh',
+    'params.config',
+    'nextflow.config'
+]
+
+local_dir = ['bin', 'data', 'docs', 'config']
+
+local_files = [
+    'main_AMR++.nf',
+    'bin/amr_long_to_wide.py',
+    'bin/kraken2_long_to_wide.py',
+    'bin/QC_summary_stats.py',
+    'bin/rfplot.py',
+    'bin/samtools_idxstats.py',
+    'bin/trimmomatic_stats.py',
+    'bin/snp_long_to_wide.py',
+    'bin/download_minikraken.sh',
+    'bin/rarefaction',
+    'bin/resistome',
+]
+
+skipsteps = ['configure', 'build']
+
+files_to_copy = [
+    (local_exe_files, '%(installdir)s'),
+    (local_dir, '%(installdir)s')
+]
+
+install_cmd = "chmod +x %(installdir)s/*.nf && "
+install_cmd += "chmod +x %(installdir)s/*.sh"
+
+modextrapaths = {'PATH': ''}
+
+
+modloadmsg = """To execute AmrPlusPlus, run:\n nextflow run main_AMR++.nf [options]\n"""
+
+sanity_check_paths = {
+    'files': ['%s' % x for x in local_files],
+    'dirs': ['config']
+}
+
+moduleclass = 'bio'
