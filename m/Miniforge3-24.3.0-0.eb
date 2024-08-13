@@ -15,7 +15,7 @@ checksums = ['23367676b610de826f50f7ddc91139a816d4b59bd4c69cc9b6082d9b2e7fe8a3']
 install_cmd = 'bash %(name)s-%(version)s-Linux-x86_64.sh -b -f -p %(installdir)s'
 
 postinstallcmds = [
-    'printf "default_channels:  #!final\n - niwa_users_cant_use_default_channel_check_the_policy\n" >> %(installdir)s/.condarc',
+    'printf "default_channels:  #!final\n - AgR_users_cant_use_default_channel_check_the_policy\n" >> %(installdir)s/.condarc',
 #    'printf "envs_dirs:\n  - /opt/niwa/share/conda_envs\n" >> %(installdir)s/.condarc',
 ]
 
