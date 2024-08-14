@@ -1,0 +1,18 @@
+name = 'Bowtie2'
+version = '2.5.4'
+
+homepage = 'http://bowtie-bio.sourceforge.net/bowtie2/index.shtml'
+description = """Ultrafast and memory-efficient tool for aligning
+sequencing reads to long reference sequences."""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+toolchainopts = {'pic': True, 'cstd': 'c++11'}
+
+sources = ['%(namelower)s-%(version)s-source.zip']
+source_urls = [('http://sourceforge.net/projects/bowtie-bio/files/%(namelower)s/%(version)s', 'download')]
+
+dependencies = [
+    ('tbb', '2021.13.0'),
+]
+
+moduleclass = 'bio'
