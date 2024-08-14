@@ -4,7 +4,7 @@ version = '1.3.1'
 homepage = 'http://bowtie-bio.sourceforge.net/index.shtml'
 description = """Ultrafast, memory-efficient short read aligner."""
 
-toolchain = {'name': 'GCC', 'version': '11.3.0'}
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
 toolchainopts = {'pic': True, 'cstd': 'gnu++98'}
 
 # https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.2.0/bowtie-1.2-source.zip/download
@@ -19,10 +19,10 @@ toolchainopts = {'pic': True, 'cstd': 'gnu++98'}
 
 source_urls = ['https://sourceforge.net/projects/bowtie-bio/files/bowtie/%(version)s/']
 sources = ['%(namelower)s-%(version)s-src.zip']
-checksums = ['e23517aa53846ef828172be911750cd05748522117efcbbe5a36f3241fb40761']
+#checksums = ['e23517aa53846ef828172be911750cd05748522117efcbbe5a36f3241fb40761']
 
 dependencies = [
-    ('tbb', '2021.5.0'),
+    ('tbb', '2021.13.0'),
 ]
 
 moduleclass = 'bio'

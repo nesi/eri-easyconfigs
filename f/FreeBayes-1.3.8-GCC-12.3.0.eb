@@ -32,11 +32,12 @@ buildopts = 'C=$CC CXX=$CXX'
 
 builddependencies = [
     ('CMake', '3.27.7', '', SYSTEM),
+    ('vcflib', '1.0.9-foss-2023a-R-4.4.1', '', SYSTEM)
 ]
 
 dependencies = [
     ('bzip2', '1.0.8'),
-    ('vcflib', '1.0.1'),  # for freebayes-parallel
+#    ('vcflib', '1.0.9-foss-2023a-R-4.4.1'),  # for freebayes-parallel
 ]
 
 files_to_copy = ['bin', 'scripts']
