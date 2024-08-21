@@ -19,7 +19,7 @@ builddependencies = [('CMake', '3.27.7', '', SYSTEM),
 
 dependencies = [
  ('Boost', '1.83.0'),
-    ('tbb', '2021.5.0'),
+    ('tbb', '2021.13.0'),
     ('Jellyfish', '2.3.0'),
     ('XZ', '5.4.2'),
     ('jemalloc', '5.3.0','',SYSTEM),
