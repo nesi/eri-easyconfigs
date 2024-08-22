@@ -1,0 +1,35 @@
+easyblock = 'Tarball'
+
+name = 'TSEBRA'
+version = '1.1.1'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/Gaius-Augustus/TSEBRA'
+description = """Transcript Selector for BRAKER"""
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+
+source_urls = ['https://github.com/Gaius-Augustus/TSEBRA/archive/']
+sources = ['v.%(version)s.tar.gz']
+checksums = ['0426c243888135ee3fd6ea0ca9f37eb4af03dd117498165257fa756f59d49ce9']
+
+dependencies = [
+                 ('Python', '3.11.6'),  
+               ]
+
+fix_python_shebang_for = ['bin/*']
+
+sanity_check_paths = {
+    'files': ['bin/evidence.py', 'bin/tsebra.py'],
+    'dirs': ['docs', 'example'],
+}
+
+                
+modextravars = {'TSEBRA_CONFIG_PATH': '%(installdir)s/config',
+                'TSEBRA_BIN_PATH': '%(installdir)s/bin',}
+
+sanity_check_commands = ["tsebra.py --help"]
+
+
+moduleclass = 'bio'
+
