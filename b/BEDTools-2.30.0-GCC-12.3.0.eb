@@ -18,7 +18,7 @@ sources = ['bedtools-%(version)s.tar.gz']
 dependencies = [
     ('XZ', '5.4.2'),
     ('bzip2', '1.0.8'),
-    ('BAMTools','2.5.2'),
+    ('BamTools','2.5.2'),
 ]
 
 

@@ -7,7 +7,7 @@ homepage = 'https://ccb.jhu.edu/software/hisat2/index.shtml'
 description = """HISAT2 is a fast and sensitive alignment program for mapping next-generation sequencing reads
  (both DNA and RNA) against the general human population (as well as against a single reference genome)."""
 
-toolchain = {'name': 'gimpi', 'version': '2022a'}
+toolchain = {'name': 'gompi', 'version': '2023a'}
 
 local_version_url = version.replace('.', '')
 sources = [{
