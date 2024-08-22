@@ -26,9 +26,9 @@ prebuildopts = "sed -i 's|../vcflib/.*/||g' scripts/freebayes-parallel && "
 # prebuildopts = 'make -C vcflib C=$CC CXX=$CXX && '  # for freebayes-parallel
 
 if '-' not in version:
-    prebuildopts += "rm -rf .git &&" # prevent "-dirty" version suffix
+   prebuildopts += "rm -rf .git &&" # prevent "-dirty" version suffix
 
-buildopts = 'C=$CC CXX=$CXX'
+#buildopts = 'C=$CC CXX=$CXX'
 
 builddependencies = [
     ('CMake', '3.27.7', '', SYSTEM),

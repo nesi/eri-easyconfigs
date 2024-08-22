@@ -6,7 +6,7 @@ version = '3.5.0'
 homepage = 'http://bioinf.uni-greifswald.de/augustus/'
 description = "AUGUSTUS is a program that predicts genes in eukaryotic genomic sequences"
 
-toolchain = {'name': 'gimkl', 'version': '2022a'}
+toolchain = {'name': 'foss', 'version': '2023a'}
 toolchainopts = {'opt': True}
 
 source_urls = ['https://github.com/Gaius-Augustus/Augustus/archive/refs/tags']
@@ -16,17 +16,17 @@ patches = [
 ]
 
 dependencies = [
-    ('Python','3.11.3'),
-    ('SAMtools', '1.16.1'),
-    ('zlib', '1.2.11'),       # for ZIPINPUT
-    ('Boost', '1.77.0'),      # for ZIPINPUT and COMPGENEPRED
+    ('Python','3.11.6'),
+    ('SAMtools', '1.19'),
+    ('zlib', '1.2.13'),       # for ZIPINPUT
+    ('Boost', '1.83.0'),      # for ZIPINPUT and COMPGENEPRED
     ('GSL', '2.7'),           # for COMPGENEPRED
     ('lp_solve', '5.5.2.11'),  # for COMPGENEPRED
     ('SuiteSparse', '5.13.0'), # for COMPGENEPRED
     ('BamTools', '2.5.2'),    # for bam2hints and filterBam
-    ('SQLite', '3.36.0'),     # for COMPGENEPRED
-    ('BCFtools','1.16'),
-    ('HTSlib','1.16'),
+    ('SQLite', '3.42.0'),     # for COMPGENEPRED
+    ('BCFtools','1.19'),
+    ('HTSlib','1.19'),
 ]
 
 skipsteps = ['configure']
