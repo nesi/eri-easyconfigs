@@ -9,7 +9,7 @@ description = """Pipeline for predicting and scoring hints (in the form of intro
  stop codons) in the genome of interest by mapping and spliced aligning predicted genes to a database of
  reference protein sequences."""
 
-toolchain = {'name': 'gimkl', 'version': '2022a'}
+toolchain = {'name': 'foss', 'version': '2023a'}
 toolchainopts = {'openmp': True, 'opt': True}
 
 source_urls = ['https://github.com/gatech-genemark/%(name)s/releases/download/v%(version)s']
@@ -17,8 +17,8 @@ sources = [SOURCE_TAR_GZ]
 checksums = ['440778dd6b8b5eafaca492b0124a8f88fdd8f072209ed8e8df3e6cd89165c2a4']
 
 dependencies = [
-    ('Perl', '5.34.1'),
-    ('Python', '3.11.3'),
+    ('Perl', '5.38.2'),
+    ('Python', '3.11.6'),
     ('GeneMark-ES', '4.71'),
     ('DIAMOND', '2.1.1'),
     ('spaln', '2.4.13f'),

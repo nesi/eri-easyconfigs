@@ -10,7 +10,7 @@ description = """
 Assembly-free construction of UTRs from short read RNA-Seq data on the basis of coding sequence annotation.
 """
 
-toolchain = {'name': 'gimkl', 'version': '2022a'}
+toolchain = {'name': 'foss', 'version': '2023a'}
 
 source_urls = [
     'https://github.com/Gaius-Augustus/GUSHR/archive',
@@ -32,10 +32,10 @@ checksums = [
 ]
 
 dependencies = [
-    ('Python','3.11.3'),
-    ('Java', '17', '', SYSTEM),
+    ('Python','3.11.6'),
+    ('Java', '20.0.2', '', SYSTEM),
     ('AUGUSTUS', '3.5.0'),
-    ('GLib', '2.72.1'),
+    ('GLib', '2.78.1'),
 ]
 
 sanity_check_paths = {

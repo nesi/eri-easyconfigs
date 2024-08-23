@@ -6,7 +6,7 @@ version = '2.4.13f'
 homepage = 'https://github.com/ogotoh/spaln'
 description = """Stand-alone program that maps and aligns a set of cDNA or protein sequences onto a whole genomic sequence in a single job."""
 
-toolchain = {'name': 'GCC', 'version': '11.3.0'}
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
 toolchainopts = {'optarch': False}
 
 
@@ -14,8 +14,8 @@ source_urls = ['https://github.com/ogotoh/spaln/archive/']
 sources = ['ver.%(version)s.tar.gz']
 checksums = ['024fdcf58e38373983092280a7e10ff9c7e246e7d2465c165e158512e686225e']
 
-dependencies = [('Perl','5.34.1'),
-                ('zlib', '1.2.11'), ]
+dependencies = [('Perl','5.38.2'),
+                ('zlib', '1.2.13'), ]
 
 start_dir = 'src'
 
