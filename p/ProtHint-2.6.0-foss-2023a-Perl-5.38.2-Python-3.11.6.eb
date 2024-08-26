@@ -20,7 +20,7 @@ dependencies = [
     ('Perl', '5.38.2'),
     ('Python', '3.11.6'),
     ('GeneMark-ES', '4.71'),
-    ('DIAMOND', '2.1.1'),
+    ('DIAMOND', '2.1.9'),
     ('spaln', '2.4.13f'),
 ]
 
