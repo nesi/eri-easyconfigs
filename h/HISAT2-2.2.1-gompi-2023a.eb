@@ -13,9 +13,9 @@ local_version_url = version.replace('.', '')
 sources = [{
     'source_urls': ['https://cloud.biohpc.swmed.edu/index.php/s/hisat2-%s-source/' % (local_version_url)],
     'download_filename': 'download',
-    'filename': '%(namelower)s-%(version)s-source.zip',
+    'filename': '%(namelower)s-%(version)s-Linux_x86_64.zip',
 }]
-checksums = ['48e933330d4d8470d2b3dfe7ec3918f2e98a75f7381891e23b7df1fb4f135eb1']
+#checksums = ['48e933330d4d8470d2b3dfe7ec3918f2e98a75f7381891e23b7df1fb4f135eb1']
 
 patches = ['hisat2-libname-fix.patch']
 

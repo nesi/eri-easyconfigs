@@ -7,16 +7,16 @@ homepage = 'https://github.com/ncbi/ngs'
 description = """NGS is a new, domain-specific API for accessing reads, alignments and pileups produced from
  Next Generation Sequencing."""
 
-toolchain = {'name': 'GCC', 'version': '11.3.0'}
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
 
 source_urls = ['https://github.com/ncbi/ngs/archive/']
 sources = ['%(version)s.tar.gz']
 checksums = ['7555ab7c2f04bd81160859f6c85c65376dc7f7b891804fad9e7636a7788e39c2']
 
-dependencies = [('Java', '1.8.0_144', '', SYSTEM)]
+dependencies = [('Java', '20.0.2', '', SYSTEM)]
 
 builddependencies = [
-    ('binutils', '2.38'),
+    ('binutils', '2.40'),
 ]
 
 # override default of using $HOME/ncbi-outdir

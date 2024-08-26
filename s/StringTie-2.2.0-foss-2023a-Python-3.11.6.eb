@@ -16,7 +16,7 @@ checksums = ['7d4435143adf1fe9f606ce6353439146f588228f68cc73994a6e264fa08e8323']
 
 dependencies = [ ('HTSlib','1.19'),
     		     ('libdeflate','1.10','',SYSTEM),
-                 ('Python','3.11.3'),
+                 ('Python','3.11.6'),
                ]
 
 #prevent from re-building htslib in favout of htslib module
