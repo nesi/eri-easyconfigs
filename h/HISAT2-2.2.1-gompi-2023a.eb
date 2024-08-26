@@ -9,15 +9,18 @@ description = """HISAT2 is a fast and sensitive alignment program for mapping ne
 
 toolchain = {'name': 'gompi', 'version': '2023a'}
 
-local_version_url = version.replace('.', '')
 sources = [{
-    'source_urls': ['https://cloud.biohpc.swmed.edu/index.php/s/hisat2-%s-source/' % (local_version_url)],
+    'source_urls': ['https://cloud.biohpc.swmed.edu/index.php/s/fE9QCsX3NH4QwBi'],
     'download_filename': 'download',
-    'filename': '%(namelower)s-%(version)s-Linux_x86_64.zip',
+    'filename': '%(namelower)s-%(version)s-source.zip',
 }]
-#checksums = ['48e933330d4d8470d2b3dfe7ec3918f2e98a75f7381891e23b7df1fb4f135eb1']
-
-patches = ['hisat2-libname-fix.patch']
+patches = [
+    'hisat2-libname-fix.patch',
+]
+#checksums = [
+#    {'hisat2-2.2.1-source.zip': '48e933330d4d8470d2b3dfe7ec3918f2e98a75f7381891e23b7df1fb4f135eb1'},
+#    {'hisat2-libname-fix.patch': '8aa91d1dd6455b96c10ce48827f8313b006241d815fbe6382422dbae3b610726'},
+#]
 
 dependencies = [
     ('NGS', '2.11.2'),
@@ -33,12 +36,13 @@ local_executables = ['hisat2', 'hisat2-align-l', 'hisat2-align-s', 'hisat2-build
                      'hisat2_extract_snps_haplotypes_VCF.py', 'hisat2_extract_splice_sites.py',
                      'hisat2_read_statistics.py', 'hisat2_simulate_reads.py']
 
-
 files_to_copy = [(local_executables, 'bin'), 'scripts', 'example']
 
 sanity_check_paths = {
     'files': ['bin/%s' % x for x in local_executables],
     'dirs': ['scripts', 'example'],
 }
+
+sanity_check_commands = ["hisat2 --help"]
 
 moduleclass = 'bio'
