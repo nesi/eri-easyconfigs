@@ -1,12 +1,11 @@
-
 easyblock = 'MakeCp'
 
 name = 'BEDTools'
 version = '2.30.0'
 
 homepage = "https://github.com/arq5x/bedtools2"
-description = """The BEDTools utilities allow one to address common genomics tasks such as finding feature overlaps
- and computing coverage. The utilities are largely based on four widely-used file formats: BED, GFF/GTF, VCF,
+description = """The BEDTools utilities allow one to address common genomics tasks such as finding feature over$
+ and computing coverage. The utilities are largely based on four widely-used file formats: BED, GFF/GTF, VCF,   
  and SAM/BAM."""
 
 toolchain = {'name': 'GCC', 'version': '12.3.0'}
@@ -14,13 +13,14 @@ toolchain = {'name': 'GCC', 'version': '12.3.0'}
 source_urls = ['https://github.com/arq5x/bedtools2/releases/download/v%(version)s/']
 sources = ['bedtools-%(version)s.tar.gz']
 
+builddependencies = [('Python', '3.11.6-foss-2023a','',SYSTEM)]
 
 dependencies = [
     ('XZ', '5.4.2'),
+    ('zlib', '1.2.13'),
     ('bzip2', '1.0.8'),
     ('BamTools','2.5.2'),
 ]
-
 
 buildopts = 'CXX="$CXX"'
 
@@ -32,3 +32,4 @@ sanity_check_paths = {
 }
 
 moduleclass = 'bio'
+
