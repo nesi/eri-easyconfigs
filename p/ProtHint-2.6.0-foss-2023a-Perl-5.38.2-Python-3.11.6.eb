@@ -14,22 +14,19 @@ toolchainopts = {'openmp': True, 'opt': True}
 
 source_urls = ['https://github.com/gatech-genemark/%(name)s/releases/download/v%(version)s']
 sources = [SOURCE_TAR_GZ]
-checksums = ['440778dd6b8b5eafaca492b0124a8f88fdd8f072209ed8e8df3e6cd89165c2a4']
+#checksums = ['440778dd6b8b5eafaca492b0124a8f88fdd8f072209ed8e8df3e6cd89165c2a4']
 
 dependencies = [
     ('Perl', '5.38.2'),
     ('Python', '3.11.6'),
     ('GeneMark-ES', '4.71'),
-    ('DIAMOND', '2.1.1'),
+    ('DIAMOND', '2.1.9'),
     ('spaln', '2.4.13f'),
 ]
-
-
 
 exts_defaultclass = 'PerlModule'
 
 #exts_filter = ("perldoc -lm %(ext_name)s ", "")
-
 
 exts_list = [
               ('File::HomeDir', '1.006', {
@@ -59,8 +56,6 @@ exts_list = [
        }),
 ]
 
-
-
 fix_python_shebang_for = ['bin/*.py']
 
 sanity_check_paths = {
@@ -81,7 +76,6 @@ sanity_check_commands = [
     "prothint.py --help",
 #    local_test_cmd,
 ]
-
 
 modextrapaths = { 'PERL5LIB': ['lib/perl5/site_perl/%(perlver)s/'],
                 }

@@ -26,7 +26,7 @@ eb <alphabet>/foo.eb
 ```
 to test
 ```
-module use ../agr/scratch/projects/2023-nesi_slurm_testing/mattb/easybuildinstall/rocky8/modules/
+module use /agr/scratch/projects/2023-nesi_slurm_testing/mattb/easybuildinstall/rocky8/modules/
 <tool> --version # or more relevent tests
 ```
 edit, build and test as user then push to repo
