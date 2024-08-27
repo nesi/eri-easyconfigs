@@ -1,0 +1,55 @@
+easyblock = 'Tarball'
+
+name = 'GeneMark-ES'
+version = '4.72'
+
+homepage = 'http://exon.gatech.edu/GeneMark/gmes_instructions.html'
+description = """Eukaryotic gene prediction suite with automatic training"""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+
+# download manually and rename, because file is not properly versioned.  Find version in gmes.cfg
+sources = ['gmes_linux_64-%(version)s.tar.gz']
+
+dependencies = [('Perl', '5.38.2')]
+
+exts_defaultclass = 'PerlModule'
+
+exts_list = [
+              ('Clone::Choose', '0.010', {
+                'source_tmpl':'Clone-Choose-%(version)s.tar.gz',
+                'source_urls':['https://cpan.metacpan.org/authors/id/H/HE/HERMES'],
+                'checksums':['5623481f58cee8edb96cd202aad0df5622d427e5f748b253851dfd62e5123632'],
+              }),
+            ]
+
+fix_perl_shebang_for = ['%(installdir)s/*.pl']
+
+postinstallcmds = [
+    "sed -i -e '1 s|#!/usr/bin/perl|#!/usr/bin/env perl|' %(installdir)s/*.pl",
+#    "chmod go-r %(installdir)s/gm_key",
+]
+
+sanity_check_paths = {
+    'files': ['gmes_petap.pl'],
+    'dirs': [],
+}
+
+modextrapaths = {'PATH': '',
+                 'PERL5LIB': ['lib/perl5/site_perl/%(perlver)s/'],
+                }
+
+# Beause of this check THE INSTALLING ACCOUNT NEEDS ~/.gm_key TO EXIST
+modluafooter = """
+require 'io'
+require 'os'
+function file_readable(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) return true else return false end
+end
+if mode() == "load" and not file_readable(pathJoin(os.getenv("HOME"), ".gm_key")) then
+   LmodError("You do not appear to have a license for GeneMark-ET")
+end
+"""
+
+moduleclass = 'bio'

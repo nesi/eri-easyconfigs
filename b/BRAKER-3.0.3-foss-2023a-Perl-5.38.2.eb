@@ -18,28 +18,26 @@ checksums = ['3cb65c3bc51abc2a5217927c04a65739062e59c54e938504520993a193a671b4']
 dependencies = [
     ('Perl', '5.38.2'),
     ('AUGUSTUS', '3.5.0'),
-    ('GeneMark-ES', '4.71'),
+    ('GeneMark-ES', '4.72'),
     ('BamTools', '2.5.2'),
-    ('SAMtools', '1.16.1'),
+    ('SAMtools', '1.19'),
     ('GenomeThreader', '1.7.3', '-Linux_x86_64-64bit', SYSTEM),
     ('spaln', '2.4.13f'),
     ('exonerate', '2.4.0'),
-    ('BLAST', '2.13.0'),
-    ('ProtHint','2.6.0','-Perl-5.34.1-Python-3.11.3'),
+    ('BLAST', '2.16.0'),
+    ('ProtHint','2.6.0','-Perl-5.38.2-Python-3.11.6'),
     ('cdbfasta','0.99'),
-    ('GUSHR','2020-09-28','-Python-3.11.3'),
+    ('GUSHR','2020-09-28','-Python-3.11.6'),
     ('HISAT2','2.2.1'),
     ('BEDTools','2.30.0'), 
-    ('StringTie','2.2.0','-Python-3.11.3'),
+    ('StringTie','2.2.3','-Python-3.11.6'),
     ('gffread','0.12.7'),     
-    ('TSEBRA','1.1.0','-Python-3.10.5'),
+    ('TSEBRA','1.1.1','-Python-3.11.6'),
 ]
 
 fix_perl_shebang_for = ['scripts/*.pl']
 
 exts_defaultclass = 'PerlModule'
-
-
 
 exts_list = [
               ('YAML::XS', '0.86', {
@@ -53,7 +51,6 @@ exts_list = [
                 'checksums':['94bebd500af55762e83ea2f2bc594d87af828072370c7110c60c238a800d15b2'],
               }),
             ]
-
 
 sanity_check_paths = {
     'files': ['scripts/braker.pl', 'scripts/findGenesInIntrons.pl'],
