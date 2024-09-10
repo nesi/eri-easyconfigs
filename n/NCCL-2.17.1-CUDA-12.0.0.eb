@@ -1,0 +1,28 @@
+easyblock = "MakeCp"
+
+name = 'NCCL'
+version = '2.17.1'
+versionsuffix = '-CUDA-%(cudaver)s'
+
+homepage = 'https://developer.nvidia.com/nccl'
+description = """The NVIDIA Collective Communications Library (NCCL) implements multi-GPU and multi-node collective
+communication primitives that are performance optimized for NVIDIA GPUs."""
+
+toolchain = SYSTEM
+
+dependencies = [('CUDA', '12.0.0')]
+
+# Download from https://developer.nvidia.com/nccl/nccl-download (after log in)
+sources = ['%(namelower)s_%(version)s-1+cuda%(cudashortver)s_%(arch)s.txz']
+
+skipsteps = ['build']
+
+files_to_copy = ['lib', 'include']
+
+sanity_check_paths = {
+    'files': ['lib/libnccl.%s' % SHLIB_EXT, 'lib/libnccl_static.a', 'include/nccl.h'],
+    'dirs': ['include'],
+}
+
+moduleclass = 'lib'
+
