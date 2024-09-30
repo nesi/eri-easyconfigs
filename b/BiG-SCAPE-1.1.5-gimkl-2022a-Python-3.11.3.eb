@@ -1,0 +1,40 @@
+easyblock = 'Tarball'
+
+name = 'BiG-SCAPE'
+version = '1.1.5'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://bigscape-corason.secondarymetabolites.org/index.html'
+description = """Constructs sequence similarity networks of Biosynthetic Gene Clusters (BGCs) and groups them into Gene Cluster Families (GCFs)."""
+
+
+toolchain = {'name': 'gimkl', 'version': '2022a'}
+source_urls = ["https://github.com/medema-group/BiG-SCAPE/archive/refs/tags"]
+sources = ['v%(version)s.tar.gz']
+checksums = ['ec7cebbec8f83f4187c80e02ecbb37411a1898a2b83bb80088810f1600528ec7']
+
+dependencies = [
+    ('Python', '3.11.3'),
+    ('HMMER', '3.3.2'),
+    ('FastTree', '2.1.11'),
+]
+
+postinstallcmds = ["cd %(installdir)s && chmod a+x bigscape.py"]
+
+sanity_check_paths = {
+    'files': ['bigscape.py'],
+    'dirs': [],
+}
+
+sanity_check_commands = [
+    'bigscape.py --help',
+]
+
+modextrapaths = {'PATH': ''}
+
+modextravars = { 'PFAM_DB':'/opt/nesi/db/Pfam/2023-11-07'}
+
+modloadmsg = "Use ${PFAM_DB} environment variable to call the path for the pre-indexed Pfam db"
+
+
+moduleclass = 'bio'
