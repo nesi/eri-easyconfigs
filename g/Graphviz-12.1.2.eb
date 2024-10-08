@@ -1,0 +1,26 @@
+easyblock = 'Tarball'
+
+name = 'Graphviz'
+version = '12.1.2'
+
+homepage = 'https://www.graphviz.org/'
+description = """Graphviz is open source graph visualization software. Graph visualization
+ is a way of representing structural information as diagrams of
+ abstract graphs and networks. It has important applications in networking,
+ bioinformatics,  software engineering, database and web design, machine learning,
+ and in visual interfaces for other technical domains."""
+
+toolchain = SYSTEM
+
+# Download the rpm manually from source_urls extract the content of the rpm with "rpm2cpio name.rpm | cpio -idmv" 
+source_urls = ['https://gitlab.com/graphviz/graphviz']
+sources = ['%(namelower)s-%(version)s.tar.gz']
+
+
+sanity_check_paths = {
+    'files': ['bin/dot' , 'bin/tred', 'bin/gvmap'],
+    'dirs': ['bin', 'lib64', 'share'],
+}
+
+
+moduleclass = 'vis'
