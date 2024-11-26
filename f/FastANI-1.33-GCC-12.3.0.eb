@@ -1,0 +1,32 @@
+easyblock = 'ConfigureMake'
+
+name = 'FastANI'
+version = '1.33'
+
+homepage = "http://www.iodbc.org/"
+description = """Tool for fast alignment-free computation of
+ whole-genome Average Nucleotide Identity (ANI)."""
+
+toolchain = {'name':'GCC','version':'12.3.0'}
+
+source_urls = ['https://github.com/ParBLiSS/FastANI/archive']
+sources = ['v%(version)s.zip']
+patches = ['%(name)s-1.1-memcpy.patch']
+checksums = [
+    'fb392ffa3c7942091a06de05c56c8e250523723c39da65ae8f245e65e440a74b',
+#    '6c2063816bd07cdc04d0b15a22e35101c8a0548c4e76c52cacee3257fa11dbec',  # FastANI-1.1-memcpy.patch
+]
+
+preconfigopts = 'autoconf && '
+
+dependencies = [
+    ('GSL', '2.7'),
+    ('zlib', '1.2.13','',SYSTEM),
+]
+
+sanity_check_paths = {
+    'files': ['bin/fastANI'],
+    'dirs': []
+}
+
+moduleclass = 'bio'
