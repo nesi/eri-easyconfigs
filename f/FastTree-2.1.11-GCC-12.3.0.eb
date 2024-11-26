@@ -16,7 +16,7 @@ sources = ['%(name)s-%(version)s.c']
 checksums = ['54cb89fc1728a974a59eae7a7ee6309cdd3cddda9a4c55b700a71219fc6e926d']
 
 
-builddependencies = [('binutils', '2.38','',SYSTEM)]
+builddependencies = [('binutils', '2.40')]
 
 skipsteps = ['source']
 
