@@ -1,0 +1,31 @@
+easyblock = 'Binary'
+
+name = 'skani'
+version = '0.2.2'
+
+homepage = 'https://github.com/bluenote-1577/skani'
+description = """accurate, fast nucleotide identity calculation for MAGs, genomes, and databases"""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+
+source_urls = ['https://github.com/bluenote-1577/skani/archive/refs/tags']
+sources = ['v%(version)s.tar.gz']
+checksums = ['e047d52b9f753625eff480fe90f1abb68f82cc6892d9d1910b18bfcedbfc0b9d']
+
+builddependencies = [
+    ('Rust', '1.82.0'),
+    ('CMake', '3.27.7','',SYSTEM),
+    ('binutils','2.40'),
+]
+
+extract_sources = True
+
+install_cmd = "cargo build --release && cargo install --root %(installdir)s --path ."
+
+sanity_check_paths = {
+    'files': ['bin/skani'],
+    'dirs': [],
+}
+
+
+moduleclass = 'bio'
