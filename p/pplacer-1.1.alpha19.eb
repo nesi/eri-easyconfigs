@@ -1,0 +1,23 @@
+easyblock = "PackedBinary"
+
+name = "pplacer"
+version = "1.1.alpha19"
+
+homepage = 'http://matsen.fhcrc.org/pplacer/'
+description = """Places query sequences on a fixed reference phylogenetic tree 
+to maximize phylogenetic likelihood or posterior probability according to a reference alignment"""
+
+toolchain = SYSTEM
+
+sources = ['pplacer-linux-v%(version)s.zip']
+source_urls = ['https://github.com/matsen/pplacer/releases/download/v%(version)s'] 
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ["."]
+}
+
+modextrapaths = {'PATH':['scripts', '.']}
+
+moduleclass = 'bio'
+
