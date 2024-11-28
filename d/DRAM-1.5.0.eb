@@ -1,0 +1,26 @@
+easyblock = 'Conda'
+
+
+name = 'DRAM'
+version = '1.5.0'
+versionsuffix = '-Miniforge3'
+
+homepage = 'https://pypi.org/project/DRAM-bio/'
+description = """Tool for annotating metagenomic assembled genomes and VirSorter identified viral contigs.."""
+
+toolchain = SYSTEM
+
+environment_file = '%(name)s-%(version)s.yml'
+sources = [environment_file]
+
+builddependencies = [('Miniforge3', '24.9.0-0')]
+
+# install additional packages
+
+prep_env = "PATH=%(installdir)s/bin:$PATH "
+
+
+sanity_check_commands = ['DRAM.py --help']
+
+moduleclass = 'bio'
+
