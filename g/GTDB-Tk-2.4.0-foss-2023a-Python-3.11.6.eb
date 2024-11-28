@@ -1,0 +1,76 @@
+easyblock = 'PythonPackage'
+
+name = 'GTDB-Tk'
+version = '2.4.0'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/Ecogenomics/GTDBTk'
+description = "A toolkit for assigning objective taxonomic classifications to bacterial and archaeal genomes."
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+
+source_urls = ['https://pypi.python.org/packages/source/g/gtdbtk']
+sources = ['gtdbtk-%(version)s.tar.gz']
+
+dependencies = [
+    ('Python', '3.11.6'),
+    ('prodigal', '2.6.3'),
+    ('HMMER', '3.3.2'),
+    ('pplacer', '1.1.alpha19', '', SYSTEM),
+    ('FastANI', '1.33'),
+    ('FastTree', '2.1.11'),
+    ('Mash','2.3','',('GCC','12.3.0')),
+    ('skani','0.2.2'),
+    
+]
+
+use_pip = True
+
+
+exts_defaultclass = 'PythonPackage'
+
+exts_default_options = {'source_urls': [PYPI_SOURCE]}
+
+exts_list = [
+    ('typing-extensions', '4.7.1', {
+        'source_tmpl':'typing_extensions-4.7.1-py3-none-any.whl',
+        'checksums': ['440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36'],
+    }),
+    ('annotated-types', '0.5.0', {
+        'source_tmpl':'annotated_types-0.5.0-py3-none-any.whl',
+        'checksums': ['58da39888f92c276ad970249761ebea80ba544b77acddaa1a4d6cf78287d45fd'],
+    }),
+    ('pydantic-core', '2.6.3', {
+        'source_tmpl':'pydantic_core-2.6.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl',
+        'checksums': ['1ce8c84051fa292a5dc54018a40e2a1926fd17980a9422c973e3ebea017aa8da'],
+        'modulename':'pydantic_core',
+    }),
+    ('pydantic', '1.10.13', {
+	'source_tmpl':'%(name)s-%(version)s-py3-none-any.whl',
+        'checksums': ['b87326822e71bd5f313e7d3bfdc77ac3247035ac10b0c0618bd99dcf95b1e687'],
+	'modulename':'pydantic',
+    }),
+]
+
+
+options = {'modulename': 'gtdbtk'}
+
+
+modextravars = {
+                'GTDBTK_DATA_PATH':'/agr/persist/apps/databases/GTDB-Tk/release220',
+               }
+
+#add skani pre-compiled binary to bin
+postinstallcmds =["cd %(installdir)s/bin && wget https://github.com/bluenote-1577/skani/releases/download/latest/skani"]
+postinstallcmds +=["chmod +x %(installdir)s/bin/skani"]
+
+
+
+
+sanity_check_paths = {
+    'files': ['bin/gtdbtk'],
+    'dirs': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'bio'
+

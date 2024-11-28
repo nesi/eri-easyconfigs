@@ -1,0 +1,10 @@
+--- a/src/mash/robin_hood.h
++++ b/src/mash/robin_hood.h
+@@ -45,6 +45,7 @@
+ #include <memory> // only to support hash of smart pointers
+ #include <stdexcept>
+ #include <string>
++#include <limits>
+ #include <type_traits>
+ #include <utility>
+ #if __cplusplus >= 201703L
