@@ -1,0 +1,26 @@
+easyblock = 'Conda'
+
+name = 'QIIME2'
+version = '2024.10'
+versionsuffix = '-amplicon'
+
+
+homepage = 'http://qiime2.org/'
+description = """An open-source bioinformatics pipeline for microbiome analysis from raw DNA sequencing data."""
+
+toolchain = SYSTEM
+
+environment_file = '%(namelower)s%(versionsuffix)s-%(version)s.yml'
+sources = [environment_file]
+source_urls = ['https://data.qiime2.org/distro/core']
+
+
+builddependencies = [('Miniforge3','24.3.0-0')]
+
+
+#install_cmd = 'conda env create -f %(environment_file)s  -p %(installdir)s'
+
+
+sanity_check_commands = ['qiime info']
+
+moduleclass = 'bio'
