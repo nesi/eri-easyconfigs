@@ -1,0 +1,33 @@
+easyblock = 'EB_Qt'
+
+name = 'Qt5'
+version = '5.15.5'
+
+homepage = 'http://qt.io/'
+description = "Qt is a comprehensive cross-platform C++ application framework."
+
+toolchain = {'name': 'GCCcore', 'version': '9.2.0'}
+
+source_urls = [
+    'http://download.qt.io/official_releases/qt/%(version_major_minor)s/%(version)s/single/',
+    'http://download.qt.io/archive/qt/%(version_major_minor)s/%(version)s/single/'
+]
+sources = ['qt-everywhere-src-%(version)s.tar.xz']
+#checksums = ['c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81']
+
+builddependencies = [
+    ('binutils', '2.32'),
+]
+
+dependencies = [
+    ('GLib', '2.64.0'),
+    ('libpng', '1.6.37'),
+#    ('NSS', '3.39'),
+#    ('DBus', '1.13.6'),
+    ('gperf', '3.1', '', SYSTEM),
+]
+
+# qtgamepad needs recent kernel/libevdev (fails on RHEL 6.x)
+configopts = '-skip qtgamepad'
+
+moduleclass = 'devel'
