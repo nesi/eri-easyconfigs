@@ -1,0 +1,27 @@
+easyblock = 'Tarball'
+
+name = 'Dorado'
+version = '0.9.1'
+
+homepage = 'https://nanoporetech.com/products/minit'
+description = """High-performance, easy-to-use, open source basecaller for Oxford Nanopore reads."""
+
+toolchain = SYSTEM
+
+# download this by hand after an agreement
+source_urls = ['https://community.nanoporetech.com/downloads']
+sources = ['%(namelower)s-%(version)s-linux-x64.tar.gz']
+
+dependencies = [
+                  ('CUDA', '11.8.0','',SYSTEM),
+               ]
+
+
+sanity_check_paths = {
+    'files': ['bin/dorado' ,'lib/libaec.so'],
+    'dirs': ['bin','lib'],
+}
+
+modextrapaths = { 'LD_LIBRARY_PATH':['lib'] }
+
+moduleclass = 'bio'
