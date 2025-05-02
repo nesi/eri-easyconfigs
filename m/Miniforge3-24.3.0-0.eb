@@ -17,6 +17,10 @@ install_cmd = 'bash %(name)s-%(version)s-Linux-x86_64.sh -b -f -p %(installdir)s
 postinstallcmds = [
     'printf "default_channels:  #!final\n - AgR_users_cant_use_default_channel_check_the_policy\n" >> %(installdir)s/.condarc',
 #    'printf "envs_dirs:\n  - /opt/niwa/share/conda_envs\n" >> %(installdir)s/.condarc',
+
+    # Remove krb5 (which provides kinit)
+    '%(installdir)s/bin/conda remove -y krb5 --force',
+
 ]
 
 moduleclass = 'lang'
