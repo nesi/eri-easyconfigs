@@ -105,9 +105,9 @@ exts_list = [
         'source_urls': ['https://pypi.python.org/packages/source/p/plac'],
         'checksums': ['38bdd864d0450fb748193aa817b9c458a8f5319fbf97b2261151cfc0a5812090'],
     }),
-    ('yte', '1.5.1', {
+    ('yte', '1.7.0', {
         'source_urls': ['https://pypi.python.org/packages/source/y/yte'],
-        'checksums': ['6d0b315b78af83276d78f5f67c107c84238f772a76d74f4fc77905b46f3731f5'],
+        'checksums': ['d9cadcb597128490356a8260842fd71bf3145fa4ee633ecc4023f53a6b3f646d'],
     }),
     ('humanfriendly', '10.0', {                                                                                                                                                            
         'source_urls': ['https://pypi.python.org/packages/source/h/humanfriendly'],                                                                                                         
@@ -116,34 +116,6 @@ exts_list = [
     ('snakedeploy', '0.8.6', {
         'source_urls': ['https://pypi.python.org/packages/source/s/snakedeploy'],
         'checksums': ['5f19eb36478ec26b5964ed260ac75292d42743c0a85b8077fc28fd399e5e7fc8'],
-    }),
-    ('snakemake_interface_common', '1.17.2', {
-        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-common'],
-        'checksums': ['7a2bba88df98c1a0a5cec89b835c62dd2e6e72c1fb8fd104fe73405c800b87c0'],
-    }),
-    ('snakemake_interface_storage_plugins', '3.2.2', {
-        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-storage-plugins'],
-        'checksums': ['fc8a70ef5b1fd054bc64270925228e2054158da9bcf8fa8bd4be36d93a82678b'],
-    }),
-    ('snakemake_interface_executor_plugins', '9.1.1', {
-        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-executor-plugins'],
-        'checksums': ['357c3b1d633b26241693a4e5ce291fbe198c03a54a30acfa86dd97dc252fa2c6'],
-    }),
-    ('snakemake_executor_plugin_slurm_jobstep', '0.3.0', {                                                                                                                                                                        
-        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-slurm-jobstep'],
-        'checksums': ['ebcd374bdde2d4f356e61ac221cd4244566dd980db2de3250780f454e5251c49'],
-    }),
-     ('snakemake_executor_plugin_slurm', '1.3.6', {                                                                                                                                                                        
-        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-slurm'],
-        'checksums': ['1c7b436a37aa067fe852a7a0b4a69462ce5b1d37dab2dab264d27c2c93b39290'],
-    }),
-    ('snakemake_interface_report_plugins', '1.0.0', {                                                                                                                                                                        
-        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-report-plugins'],
-        'checksums': ['02311cdc4bebab2a1c28469b5e6d5c6ac6e9c66998ad4e4b3229f1472127490f'],
-    }),
-    ('snakemake_executor_plugin_cluster_generic', '1.0.9', {                                                                                                                                                                        
-        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-cluster-generic'],
-        'checksums': ['ad0dc2d8bde7d4f336364bebe11a3b2209653c481ce8fbb0ae8bec81016a9a14'],
     }),
     ('trove_classifiers', '2025.5.9.12', {                                                                                                                                                                        
         'source_urls': ['https://pypi.python.org/packages/source/t/trove-classifiers'],
@@ -156,6 +128,37 @@ exts_list = [
     ('hatchling', '1.27.0', {                                                                                                                                                        
         'source_urls': ['https://pypi.python.org/packages/source/h/hatchling'],
         'checksums': ['971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6'],
+    }),
+    ('snakemake_interface_common', '1.18.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-common'],
+        'checksums': ['2810abb68c1d2e5da69f271c9a0fc819dd9e62249c01db63793504011c7ad39a'],
+    }),
+    ('snakemake_interface_storage_plugins', '4.2.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-storage-plugins'],
+        'checksums': ['41f23c1940942d45fe6afa6578b50a7181b2d4d32013421ef2fc1ea0e4bbe137'],
+        'preinstallopts': "sed -i 's/build-backend = \"poetry.core.masonry.api\"/build-backend = \"hatchling.build\"/' pyproject.toml && sed -i 's/requires = \\[\"poetry-core\"\\]/requires = [\"hatchling\"]/' pyproject.toml && ",
+
+    }),
+    ('snakemake_interface_executor_plugins', '9.3.5', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-executor-plugins'],
+        'checksums': ['483b4c6b70f92170c4d87cfe213fad4ecab58abfeaee1ec428d3403026745265'],
+        'preinstallopts': "sed -i 's/build-backend = \"poetry.core.masonry.api\"/build-backend = \"hatchling.build\"/' pyproject.toml && sed -i 's/requires = \\[\"poetry-core\"\\]/requires = [\"hatchling\"]/' pyproject.toml && ",
+    }),
+    ('snakemake_executor_plugin_slurm_jobstep', '0.3.0', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-slurm-jobstep'],
+        'checksums': ['ebcd374bdde2d4f356e61ac221cd4244566dd980db2de3250780f454e5251c49'],
+    }),
+     ('snakemake_executor_plugin_slurm', '1.3.6', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-slurm'],
+        'checksums': ['1c7b436a37aa067fe852a7a0b4a69462ce5b1d37dab2dab264d27c2c93b39290'],
+    }),
+    ('snakemake_interface_report_plugins', '1.1.0', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-report-plugins'],
+        'checksums': ['b1ee444b2fca51225cf8a102f8e56633791d01433cd00cf07a1d9713a12313a5'],
+    }),
+    ('snakemake_executor_plugin_cluster_generic', '1.0.9', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-cluster-generic'],
+        'checksums': ['ad0dc2d8bde7d4f336364bebe11a3b2209653c481ce8fbb0ae8bec81016a9a14'],
     }),
     ('snakemake_interface_logger_plugins', '1.2.3', {                                                                                                                                                        
         'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-logger-plugins'],
@@ -173,6 +176,22 @@ exts_list = [
         'modulename': 'setuptools_scm',
         'source_urls': ['https://pypi.python.org/packages/source/s/setuptools-scm'],
         'checksums': ['3d555e92b75dacd037d32bafdf94f97af51ea29ae8c7b234cf94b7a5bd242a63'],
+    }),
+    ('conda_inject', '1.3.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/c/conda-inject'],
+        'checksums': ['0b8cde8c47998c118d8ff285a04977a3abcf734caf579c520fca469df1cd0aac'],
+    }),
+    ('connection_pool', '0.0.3', {
+        'source_urls': ['https://pypi.python.org/packages/source/c/connection_pool'],
+        'checksums': ['bf429e7aef65921c69b4ed48f3d48d3eac1383b05d2df91884705842d974d0dc'],
+    }),
+    ('nbformat', '5.10.4', {
+        'source_urls': ['https://pypi.python.org/packages/source/n/nbformat'],
+        'checksums': ['322168b14f937a5d11362988ecac2a4952d3d8e3a2cbeb2319584631226d5b3a'],
+    }),
+    ('fastjsonschema', '2.21.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/f/fastjsonschema'],
+        'checksums': ['794d4f0a58f848961ba16af7b9c85a3e88cd360df008c59aac6fc5ae9323b5d4'],
     }),
     (name, version, {
         'source_urls': ['https://pypi.python.org/packages/source/s/snakemake'],
