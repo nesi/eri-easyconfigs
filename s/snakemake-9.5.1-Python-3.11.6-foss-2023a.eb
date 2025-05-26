@@ -1,0 +1,194 @@
+easyblock = 'PythonBundle'
+
+name = 'snakemake'
+version = '9.5.1'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://snakemake.readthedocs.io'
+description = "The Snakemake workflow management system is a tool to create reproducible and scalable data analyses."
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+
+
+#removing GraphViz dependency from this version on-wards. We don't need pygraph viz to generate the .pdf or the .html report anymore
+#Hence,removing pygrpahviz from extension list
+
+dependencies = [
+    ('Python', '3.11.6'),
+    ('Graphviz','12.1.2','',SYSTEM),
+]
+
+use_pip = True
+
+exts_list = [
+    ('smart_open', '5.2.1', {
+#        'modulename': 'smart-open',
+        'source_urls': ['https://pypi.python.org/packages/source/s/smart-open'],
+        'checksums': ['75abf758717a92a8f53aa96953f0c245c8cedf8e1e4184903db3659b419d4c17'],                                    
+    }),
+    ('filelock', '3.2.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/f/filelock'],
+        'checksums': ['85ecb30757aa19d06bfcdad29cc332b9a3e4851bf59976aea1e8dadcbd9ef883'],
+                               
+     }),    
+    ('PuLP', '2.5.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/PuLP'],
+        'checksums': ['5dc7d76bfb1da06ac048066ced75603340d0d7ba8a7dbfce4040d6f126eda0d5'],
+    }),
+    ('toposort', '1.6', {
+        'source_urls': ['https://pypi.python.org/packages/source/t/toposort'],
+        'checksums': ['a7428f56ef844f5055bb9e9e44b343983773ae6dce0fe5b101e08e27ffbd50ac'],
+    }),
+    ('smmap2', '2.0.4', {
+        'modulename': 'smmap',
+        'source_urls': ['https://pypi.python.org/packages/source/s/smmap2'],
+        'checksums': ['dc216005e529d57007ace27048eb336dcecb7fc413cfb3b2f402bb25972b69c6'],
+    }),
+    ('gitdb2', '2.0.4', {
+        'modulename': 'gitdb',
+        'source_urls': ['https://pypi.python.org/packages/source/g/gitdb2'],
+        'checksums': ['bb4c85b8a58531c51373c89f92163b92f30f81369605a67cd52d1fc21246c044'],
+    }),
+    ('GitPython', '2.1.11', {
+        'modulename': 'git',
+        'source_urls': ['https://pypi.python.org/packages/source/g/GitPython'],
+        'checksums': ['8237dc5bfd6f1366abeee5624111b9d6879393d84745a507de0fda86043b65a8'],
+    }),
+
+    ('docutils', '0.20.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/d/docutils'],
+        'checksums': ['f08a4e276c3a1583a86dce3e34aba3fe04d02bba2dd51ed16106244e8a923e3b'],
+    }),
+    ('jsonschema', '2.6.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/j/jsonschema'],
+        'checksums': ['6ff5f3180870836cae40f06fa10419f557208175f13ad7bc26caa77beb1f6e02'],
+    }),
+    ('datrie', '0.8.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/d/datrie'],
+        'checksums': ['525b08f638d5cf6115df6ccd818e5a01298cd230b2dac91c8ff2e6499d18765d'],
+ #       'use_pip': False,
+ #       'prebuildopts': './update_c.sh && ',
+    }),
+    ('appdirs', '1.4.3', {
+        'source_urls': ['https://pypi.python.org/packages/source/a/appdirs'],
+        'checksums': ['9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92'],
+    }),
+    ('ConfigArgParse', '0.13.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/c/ConfigArgParse'],
+        'checksums': ['e6441aa58e23d3d122055808e5e2220fd742dff6e1e51082d2a4e4ed145dd788'],
+    }),
+    ('throttler', '1.2.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/t/throttler'],
+        'checksums': ['d54db406d98e1b54d18a9ba2b31ab9f093ac64a0a59d730c1cf7bb1cdfc94a58'],
+    }),
+    ('wrapt', '1.15.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/w/wrapt'],
+        'checksums': ['d06730c6aed78cee4126234cf2d071e01b44b915e725a6cb439a879ec9754a3a'],
+    }),
+    ('retry', '0.9.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/r/retry'],
+        'checksums': ['f8bfa8b99b69c4506d6f5bd3b0aabf77f98cdb17f3c9fc3f5ca820033336fba4'],
+    }),
+    ('reretry', '0.11.8', {
+        'source_urls': ['https://pypi.python.org/packages/source/r/reretry'],
+        'checksums': ['f2791fcebe512ea2f1d153a2874778523a8064860b591cd90afc21a8bed432e3'],
+    }),
+    ('throttler', '1.2.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/t/throttler'],
+        'checksums': ['d54db406d98e1b54d18a9ba2b31ab9f093ac64a0a59d730c1cf7bb1cdfc94a58'],
+    }),
+    ('dpath', '2.1.6', {
+        'source_urls': ['https://pypi.python.org/packages/source/d/dpath'],
+        'checksums': ['f1e07c72e8605c6a9e80b64bc8f42714de08a789c7de417e49c3f87a19692e47'],
+    }),
+    ('plac', '1.3.5', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/plac'],
+        'checksums': ['38bdd864d0450fb748193aa817b9c458a8f5319fbf97b2261151cfc0a5812090'],
+    }),
+    ('yte', '1.5.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/y/yte'],
+        'checksums': ['6d0b315b78af83276d78f5f67c107c84238f772a76d74f4fc77905b46f3731f5'],
+    }),
+    ('humanfriendly', '10.0', {                                                                                                                                                            
+        'source_urls': ['https://pypi.python.org/packages/source/h/humanfriendly'],                                                                                                         
+        'checksums': ['6b0b831ce8f15f7300721aa49829fc4e83921a9a301cc7f606be6686a2288ddc'],                                                                                        
+    }),
+    ('snakedeploy', '0.8.6', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakedeploy'],
+        'checksums': ['5f19eb36478ec26b5964ed260ac75292d42743c0a85b8077fc28fd399e5e7fc8'],
+    }),
+    ('snakemake_interface_common', '1.17.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-common'],
+        'checksums': ['7a2bba88df98c1a0a5cec89b835c62dd2e6e72c1fb8fd104fe73405c800b87c0'],
+    }),
+    ('snakemake_interface_storage_plugins', '3.2.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-storage-plugins'],
+        'checksums': ['fc8a70ef5b1fd054bc64270925228e2054158da9bcf8fa8bd4be36d93a82678b'],
+    }),
+    ('snakemake_interface_executor_plugins', '9.1.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-executor-plugins'],
+        'checksums': ['357c3b1d633b26241693a4e5ce291fbe198c03a54a30acfa86dd97dc252fa2c6'],
+    }),
+    ('snakemake_executor_plugin_slurm_jobstep', '0.3.0', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-slurm-jobstep'],
+        'checksums': ['ebcd374bdde2d4f356e61ac221cd4244566dd980db2de3250780f454e5251c49'],
+    }),
+     ('snakemake_executor_plugin_slurm', '1.3.6', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-slurm'],
+        'checksums': ['1c7b436a37aa067fe852a7a0b4a69462ce5b1d37dab2dab264d27c2c93b39290'],
+    }),
+    ('snakemake_interface_report_plugins', '1.0.0', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-report-plugins'],
+        'checksums': ['02311cdc4bebab2a1c28469b5e6d5c6ac6e9c66998ad4e4b3229f1472127490f'],
+    }),
+    ('snakemake_executor_plugin_cluster_generic', '1.0.9', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-executor-plugin-cluster-generic'],
+        'checksums': ['ad0dc2d8bde7d4f336364bebe11a3b2209653c481ce8fbb0ae8bec81016a9a14'],
+    }),
+    ('trove_classifiers', '2025.5.9.12', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/t/trove-classifiers'],
+        'checksums': ['7ca7c8a7a76e2cd314468c677c69d12cc2357711fcab4a60f87994c1589e5cb5'],
+    }),
+    ('packaging', '25.0', {                                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/p/packaging'],
+        'checksums': ['d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f'],
+    }),
+    ('hatchling', '1.27.0', {                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/h/hatchling'],
+        'checksums': ['971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6'],
+    }),
+    ('snakemake_interface_logger_plugins', '1.2.3', {                                                                                                                                                        
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake-interface-logger-plugins'],
+        'checksums': ['9228cc01f2cc0b35e9144c02d10f71cc9874296272896aeb86f9fac7db5e2c69'],
+    }),
+    ('immutables', '0.20', {
+        'source_urls': ['https://pypi.python.org/packages/source/i/immutables'],
+        'checksums': ['1d2f83e6a6a8455466cd97b9a90e2b4f7864648616dfa6b19d18f49badac3876'],
+    }),
+    ('argparse_dataclass', '2.0.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/a/argparse-dataclass'],
+        'checksums': ['09ab641c914a2f12882337b9c3e5086196dbf2ee6bf0ef67895c74002cc9297f'],
+    }),
+    ('setuptools_scm', '8.3.1', {
+        'modulename': 'setuptools_scm',
+        'source_urls': ['https://pypi.python.org/packages/source/s/setuptools-scm'],
+        'checksums': ['3d555e92b75dacd037d32bafdf94f97af51ea29ae8c7b234cf94b7a5bd242a63'],
+    }),
+    (name, version, {
+        'source_urls': ['https://pypi.python.org/packages/source/s/snakemake'],
+        'checksums': ['480367b560b7c643eb8575274b4537b20e3cba23f2502b4d221a10e88703f6bd'],
+        'preinstallopts': "sed -i '/^license = \"MIT\"$/c\\license = {text = \"MIT\"}' pyproject.toml && ",
+    }),
+]
+
+
+sanity_check_paths = {
+    'files': ['bin/snakemake'],
+    'dirs': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+sanity_check_commands = ['snakemake --help']
+
+modloadmsg = "Refer to 'Migrating to Snakemake 8 doc : https://snakemake.readthedocs.io/en/latest/getting_started/migration.html#migrating-to-snakemake-8'"
+
+moduleclass = 'tools'
