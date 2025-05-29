@@ -1,0 +1,30 @@
+name = 'CUDA'
+version = '12.5.0'
+minor_suffix = {'12.5.0':'555.42.02'}[version]
+
+
+homepage = 'https://developer.nvidia.com/cuda-toolkit'
+description = """CUDA (formerly Compute Unified Device Architecture) is a parallel
+ computing platform and programming model created by NVIDIA and implemented by the
+ graphics processing units (GPUs) that they produce. CUDA gives developers access
+ to the virtual instruction set and memory of the parallel computational elements in CUDA GPUs."""
+
+toolchain = SYSTEM
+
+source_urls = ['https://developer.download.nvidia.com/compute/cuda/%(version)s/local_installers/']
+sources = ['%(namelower)s_%(version)s_' + minor_suffix + '_linux.run']
+checksums = ['90fcc7df48226434065ff12a4372136b40b9a4cbf0c8602bb763b745f22b7a99']
+
+
+
+modluafooter = """
+append_path("PATH",            "/cm/local/apps/cuda/libs/current/bin")
+append_path("LD_LIBRARY_PATH", "/cm/local/apps/cuda/libs/current/lib64")
+"""
+
+modtclfooter = """
+append-path  PATH            /cm/local/apps/cuda/libs/current/bin
+append-path  LD_LIBRARY_PATH /cm/local/apps/cuda/libs/current/lib64
+"""
+
+moduleclass = 'system'
