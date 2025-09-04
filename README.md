@@ -52,7 +52,7 @@ eb foo.eb
 The resulting `.lua` module is then available at `/agr/persist/apps/eri_rocky8/modules/all/<tool>/<tool.lua>`
 
 ### Apps Admin Directories
-modules - `/agr/persist/apps/eri_rocky8/`  
+modules - `/agr/persist/apps/eri_rocky8/modules/all/`  
 containers - `/agr/persist/apps/containers/<name>/<name.sif>`  
 databases - `/agr/persist/apps/databases/<name>/<version>`  
 
