@@ -55,7 +55,8 @@ The resulting `.lua` module is then available at `/agr/persist/apps/eri_rocky8/m
 modules - `/agr/persist/apps/eri_rocky8/modules/all/`  
 containers - `/agr/persist/apps/containers/<name>/<name.sif>`  
 databases - `/agr/persist/apps/databases/<name>/<version>`  
-conda envs - `databases - /agr/persist/apps/conda_envs/<name>/`
+conda envs - `/agr/persist/apps/conda_envs/<name>/`
+environments then build to this Path `/mnt/gpfs/persist/apps/eri_rocky8/software/Miniforge3/24.9.0-0/envs/`
 
 ### Resources
 RST Wiki with more complete software build notes and guides.
