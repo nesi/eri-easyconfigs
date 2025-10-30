@@ -1,0 +1,42 @@
+easyblock = 'Tarball'
+
+name = 'DAS_Tool'
+version = '1.1.5'
+versionsuffix = '-R-%(rver)s'
+
+homepage = 'https://github.com/cmks/DAS_Tool'
+description = """DAS Tool is an automated method that integrates the results of a flexible number of binning
+ algorithms to calculate an optimized, non-redundant set of bins from a single assembly."""
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+
+source_urls = ['https://github.com/cmks/DAS_Tool/archive/refs/tags']
+sources = ['%(version)s.tar.gz']
+checksums = ['0cc41d7d12a1cdf24c7588148b8525e837347def49dd98b97a631a8e9cb08492']
+
+dependencies = [
+    ('R','4.4.1'),
+    ('Ruby','3.0.1'),
+    ('pullseq', '1.0.2','',SYSTEM),
+    ('prodigal', '2.6.3'),
+    ('BLAST', '2.16.0'),
+    ('DIAMOND','2.1.9'),
+]
+
+postinstallcmds = [
+    "cd %(installdir)s; unzip db.zip",
+    "chmod a+x %(installdir)s/DAS_Tool",
+]
+
+sanity_check_paths = {
+    'files': ['DAS_Tool','arc.all.faa'],
+    'dirs': ['src'],
+}
+
+modextrapaths = {
+    'PATH': '',
+    'R_LIBS': '',
+}
+
+moduleclass = 'bio'
+

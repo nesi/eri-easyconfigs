@@ -1,0 +1,30 @@
+easyblock = 'MakeCp'
+
+name = 'kma'
+version = '1.4.15'
+
+homepage = 'https://bitbucket.org/genomicepidemiology/kma'
+description = """KMA is a mapping method designed to map raw reads directly against redundant databases,
+in an ultra-fast manner using seed and extend."""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+
+# https://bitbucket.org/genomicepidemiology/kma
+bitbucket_account = 'genomicepidemiology'
+source_urls = [BITBUCKET_SOURCE]
+sources = ['%(version)s.tar.bz2']
+
+checksums = ['6f5dbbb97e1badd6ac09ae228ed3a9024621fa33cf897be4e06f8dfe63b4ffd2']
+
+local_bin_list = ['kma', 'kma_index', 'kma_shm', 'kma_update']
+
+files_to_copy = [(local_bin_list, 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/%s' % f for f in local_bin_list],
+    'dirs': []
+}
+sanity_check_commands = ['%s -h' % f for f in local_bin_list]
+
+moduleclass = 'bio'
+

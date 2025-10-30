@@ -1,0 +1,31 @@
+name = 'STAR'
+version = '2.7.9a'
+
+homepage = 'https://github.com/alexdobin/STAR'
+description = """Fast universal RNA-seq aligner"""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+toolchainopts = {'openmp': True}
+
+parallel = 1
+
+source_urls = ['https://github.com/alexdobin/%(name)s/archive/']
+sources = ['%(version)s.tar.gz']
+
+easyblock = 'MakeCp'
+
+start_dir = 'source'
+
+buildopts = ['STAR CXX="$CXX"', 'STARlong CXX="$CXX"']
+
+# Because of multiple buildopts above files_to_copy gets used twice, so I can't specify executable names properly or copy any dirs
+# files_to_copy = [(['STAR', 'STARlong'], 'bin'), 'LICENSE', 'doc', '../extras/scripts']
+files_to_copy = [(['STAR*'], 'bin'), 'LICENSE', 'doc/*.pdf']
+postinstallcmds = ['rm -f "%(installdir)s/bin/STAR.cpp" "%(installdir)s/bin/STAR.o"']
+
+sanity_check_paths = {
+    'files': ['bin/%(name)s'],
+    'dirs': []
+}
+
+moduleclass = 'bio'

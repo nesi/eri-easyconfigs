@@ -1,0 +1,29 @@
+easyblock = 'PackedBinary'
+
+name = 'FastQC'
+version = '0.12.1'
+
+homepage = 'http://www.bioinformatics.babraham.ac.uk/projects/fastqc/'
+description = """A set of tools (in Java) for working with next generation sequencing data in the BAM format."""
+
+toolchain = SYSTEM
+
+source_urls = ['http://www.bioinformatics.babraham.ac.uk/projects/fastqc/']
+sources = ['%(namelower)s_v%(version)s.zip']
+
+# If /usr/bin/perl is not sufficient then uncomment:
+#patches = ['FastQC_shebang.patch']
+
+postinstallcmds = ["chmod a+rx %(installdir)s/fastqc %(installdir)s/run_fastqc.bat"]
+
+modextrapaths = {'PATH': ['']}
+
+sanity_check_paths = {
+    'files': ['fastqc'],
+    'dirs': [],
+}
+
+sanity_check_commands = [('fastqc', '-v')]
+
+moduleclass = 'bio'
+

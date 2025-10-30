@@ -1,0 +1,29 @@
+easyblock = 'CMakeMake'
+
+name = 'MetaBAT'
+version = '2.17'
+
+homepage = 'https://bitbucket.org/berkeleylab/metabat'
+description = "An efficient tool for accurately reconstructing single genomes from complex microbial communities"
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+
+source_urls = ['https://bitbucket.org/berkeleylab/metabat/get/']
+sources = ['v%(version)s.tar.gz']
+
+builddependencies = [('CMake', '3.27.7', '', SYSTEM)]
+
+dependencies = [
+    ('Boost', '1.83.0'),
+    ('SAMtools', '1.21'),
+]
+
+prebuildopts = "cp -a $EBROOTSAMTOOLS samtools && "
+
+sanity_check_paths = {
+    'files': ['bin/aggregateBinDepths.pl', 'bin/aggregateContigOverlapsByBin.pl', 'bin/metabat', 'bin/metabat2'],
+    'dirs': [],
+}
+
+moduleclass = 'bio'
+

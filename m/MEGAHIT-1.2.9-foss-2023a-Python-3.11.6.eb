@@ -1,0 +1,23 @@
+easyblock = 'CMakeMake'
+
+name = 'MEGAHIT'
+version = '1.2.9'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/voutcn/megahit'
+description = """An ultra-fast single-node solution for large and complex
+ metagenomics assembly via succinct de Bruijn graph"""
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+
+github_account = 'voutcn'
+source_urls = [GITHUB_LOWER_SOURCE]
+sources = ['v%(version)s.tar.gz']
+checksums = ['09026eb07cc4e2d24f58b0a13f7a826ae8bb73da735a47cb1cbe6e4693118852']
+
+dependencies = [
+     ('Python', '3.11.6'),
+               ]
+
+builddependencies = [('CMake', '3.27.7','',SYSTEM)]
+
