@@ -1,0 +1,21 @@
+easyblock = 'Binary'
+
+name = 'PyRx-CLITools'
+version = '1.2.1'
+
+homepage = 'https://pyrx.sourceforge.io/'
+description = """PyRx is an award-winning Virtual Screening software for Computational Drug Discovery"""
+
+toolchain = SYSTEM
+
+#Download the binaries from https://pyrx.sourceforge.io/aws/vina and https://sourceforge.net/projects/smina/
+#source_urls = ['']
+sources = [
+    'smina', 
+    'vina', 
+]
+
+sanity_check_paths = {
+    'files': ['smina', 'vina'],
+    'dirs': [],
+}
