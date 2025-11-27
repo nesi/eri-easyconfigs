@@ -4,10 +4,6 @@
 ![Contribs](https://badgen.net/badge/Contributions/PullRequest/orange?icon=github)
 ![Contribs](https://badgen.net/badge/Contributions/Welcome/green?icon=github)
 
-<p align="center" width="100%">
-    <img width="20%" src="https://github.com/nesi/eri-easyconfigs/blob/main/resources/eri_hex.png"> 
-</p>
-
 AgR eRI cluster and OnDemand easybuild easyconfig files
 
 ## Workflow
