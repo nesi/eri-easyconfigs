@@ -4,10 +4,10 @@
 ![Contribs](https://badgen.net/badge/Contributions/PullRequest/orange?icon=github)
 ![Contribs](https://badgen.net/badge/Contributions/Welcome/green?icon=github)
 
-<div style="display:flex; height:100vh;">
+<div style="display:flex; align-items:center; justify-content:center; height:100vh;">
   <img src="https://github.com/user-attachments/assets/58c30d26-b802-41d9-90b6-e76555ac2882"
        alt="eri_hex"
-       style="width:20%; height:auto; display:block; align-items:center;">
+       style="width:20%; height:auto; display:block;">
 </div>
 
 AgR eRI cluster and OnDemand easybuild easyconfig files
