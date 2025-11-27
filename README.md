@@ -1,6 +1,6 @@
 # eri-easyconfigs
 
-[![Build status](badge)]([link](https://badgen.net/badge/Contributions/PullRequest/orange?icon=github))
+![Build status](https://badgen.net/badge/Contributions/PullRequest/orange?icon=github)
 
 <p align="center" width="100%">
     <img width="20%" src="https://github.com/nesi/eri-easyconfigs/blob/main/resources/eri_hex.png"> 
