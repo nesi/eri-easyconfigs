@@ -4,39 +4,11 @@
 ![Contribs](https://badgen.net/badge/Contributions/PullRequest/orange?icon=github)
 ![Contribs](https://badgen.net/badge/Contributions/Welcome/green?icon=github)
 
-<div style="display:flex; align-items:center; justify-content:center; height:100vh;">
+<div style="display:flex">
   <img src="https://github.com/user-attachments/assets/58c30d26-b802-41d9-90b6-e76555ac2882"
        alt="eri_hex"
        style="width:20%; height:auto; display:block;">
 </div>
-
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    html, body { height: 100%; margin: 0; }
-    .viewport {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .viewport img {
-      width: 20%;
-      height: auto;
-      display: block;
-      margin: 0; /* ensure no stray margins */
-      transform: none; /* remove any transforms that could offset layout */
-    }
-  </style>
-</head>
-<body>
-  <div class="viewport">
-    <img src="https://github.com/user-attachments/assets/58c30d26-b802-41d9-90b6-e76555ac2882" alt="eri_hex">
-  </div>
-</body>
-</html>
 
 AgR eRI cluster and OnDemand easybuild easyconfig files
 
