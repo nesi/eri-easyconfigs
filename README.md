@@ -7,7 +7,7 @@
 <img width="150" height="150" alt="eri_hex" src="https://github.com/user-attachments/assets/58c30d26-b802-41d9-90b6-e76555ac2882" />
 
 <div style="text-align:center;">
-  <img src="eri_hex.png" alt="eri_hex">
+  <img src="https://github.com/user-attachments/assets/58c30d26-b802-41d9-90b6-e76555ac2882" alt="eri_hex">
 </div>
 
 AgR eRI cluster and OnDemand easybuild easyconfig files
