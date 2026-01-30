@@ -1,7 +1,0 @@
---- configure	2020-01-29 14:52:52.000000000 +1300
-+++ configure	2020-02-14 10:59:14.848804000 +1300
-@@ -4504,3 +4504,3 @@
-   INTELMPI)
--    PKG_LIBS="-L${MPI_LIBPATH} -lmpigf -lmpi -lmpigi ${MPI_LIBS}"
-+    PKG_LIBS="-L${MPI_LIBPATH} -lmpi -lmpifort ${MPI_LIBS}"
-     ;;
