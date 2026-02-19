@@ -1,0 +1,29 @@
+easyblock = 'ConfigureMake'
+
+name = 'PnetCDF'
+version = '1.13.0'
+
+homepage = 'https://trac.mcs.anl.gov/projects/parallel-netcdf'
+description = """Parallel netCDF: A Parallel I/O Library for NetCDF File Access"""
+
+toolchain = {'name': 'gompi', 'version': '2023a'}
+
+source_urls = ['https://parallel-netcdf.github.io/Release/']
+sources = ['pnetcdf-%(version)s.tar.gz']
+checksums = ['aba0f1c77a51990ba359d0f6388569ff77e530ee574e40592a1e206ed9b2c491']
+
+## preconfigopts = "MPIF77=mpiifort MPIF90=mpiifort MPICC=mpiicc MPICXX=mpiicpc "
+configopts = " --enable-shared "
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['ncmpidiff', 'ncmpidump', 'ncmpigen', 'ncoffsets',
+                                     'ncvalidator', 'pnetcdf-config', 'pnetcdf_version']] +
+             ['lib/lib%(namelower)s.a', 'lib/lib%%(namelower)s.%s' % SHLIB_EXT],
+    'dirs': ['include'],
+}
+
+modextravars = {
+    'PNETCDF': '%(installdir)s',
+}
+
+moduleclass = 'data'
