@@ -1,0 +1,90 @@
+easyblock = 'Bundle'
+
+name = 'FileSender'
+version = '2.49.0'
+
+homepage = 'https://www.reannz.co.nz/products-and-services/filesender/'
+description = """Send large files quickly and securely using REANNZ FileSender."""
+
+toolchain = {'name': 'foss', 'version': '2023a'}
+
+dependencies = [
+    ('Python', '3.11.6'),
+]
+
+builddependencies = [('CMake', '3.27.7', '', SYSTEM)]
+exts_defaultclass = 'PythonPackage'
+
+exts_default_options = {
+    'source_urls': [PYPI_SOURCE],
+    'use_pip': True,
+    'sanity_pip_check': True,
+}
+
+exts_list = [
+    ('cryptography', '43.0.1', {
+        'source_tmpl' : '%(name)s-%(version)s-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl',
+        'checksums': ['58d4e9129985185a06d849aa6df265bdd5a74ca6e1b736a77959b498e0505b85'],
+    }),
+]
+
+postinstallcmds = ["cd  %(installdir)s && mkdir bin"]
+postinstallcmds += ["cd  %(installdir)s/bin && wget -c https://raw.githubusercontent.com/filesender/filesender/refs/heads/development/scripts/client/filesender.py && chmod +x filesender.py "]
+postinstallcmds += ["cd %(installdir)s/bin && ln -s filesender.py filesender"]
+
+modextrapaths = {
+    'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+sanity_check_paths = {
+    'files': ['bin/filesender.py'],
+    'dirs': ['lib/python%(pyshortver)s/site-packages/'],
+}
+
+sanity_check_commands = ["filesender --help"]
+
+moduleclass = 'tools'
+
+# Bug in easyconfig parsing of some triple quoted strings containing "["!
+_default_config = """
+<system>
+base_url = https://filesender.reannz.co.nz/rest.php
+default_transfer_days_valid = 10
+
+<user>
+username = username@institute.ac.nz
+apikey = xxxxxxxxxxxxxx
+""".replace('<', '[').replace('>', ']')
+
+_config_instructions = r"""
+Before using FileSender CLI for the first time:
+  1. Obtain an API secret from https://filesender.reannz.co.nz
+  2. Then update ~/.filesender/filesender.py.ini file :  "username" with your email address and "apikey"  with the API secret
+"""
+
+modluafooter = """
+if mode() == 'load' then
+   local config_dir = pathJoin(os.getenv('HOME'), '.filesender')
+   local config_file = pathJoin(config_dir, 'filesender.py.ini')
+   local default = [[""" + _default_config + """]]
+   local fresh = false
+   f = io.open(config_file, 'r')
+   if f then
+       local content = f:read("*a")
+       fresh = (content == default)
+   else
+      os.execute('mkdir -p ' .. config_dir)
+      local f = io.open(config_file, 'w')
+      if f then
+         f:write(default)
+         fresh = true
+         LmodMessage('Created FileSender configuration file at ' .. config_file .. '\\n')
+      else
+         LmodMessage('Failed to create FileSender configuration file at ' .. config_file .. '\\n')
+      end
+   end
+   if fresh then
+      LmodMessage([[""" + _config_instructions + """]])
+   end
+end
+"""
