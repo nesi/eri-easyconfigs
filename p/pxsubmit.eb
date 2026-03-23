@@ -1,0 +1,22 @@
+easyblock = 'Binary'
+
+name = 'pxsubmit'
+version = '2.11.3'
+
+homepage = 'https://www.ebi.ac.uk/pride/markdownpage/pridesubmissiontool'
+description = """PRIDE Submission Tool (aka PX Submission Tool) is the main tool used to submit proteomics datasets to PRIDE Archive."""
+
+toolchain = SYSTEM
+
+dependencies = [('Java','21.0.5')]
+
+#Download the binaries from https://pyrx.sourceforge.io/aws/vina and https://sourceforge.net/projects/smina/
+sources = [
+    'px-submission-tool-2.11.3.jar', 
+    'pxsubmit', 
+]
+
+sanity_check_paths = {
+    'files': ['px-submission-tool-2.11.3.jar'],
+    'dirs': [],
+}
