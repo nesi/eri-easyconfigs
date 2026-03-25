@@ -1,0 +1,35 @@
+easyblock = 'CMakeMake'
+
+name = 'g2clib'
+version = '1.7.0'
+
+homepage = 'https://github.com/NOAA-EMC/NCEPLIBS-g2c'
+description = """Library contains GRIB2 encoder/decoder ('C' version)."""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://github.com/NOAA-EMC/NCEPLIBS-g2c/archive/refs/tags/']
+sources = ['v%(version)s.tar.gz']
+checksums = ['73afba9da382fed73ed8692d77fa037bb313280879cd4012a5e5697dccf55175']
+
+builddependencies = [
+    ('binutils', '2.40'),
+    ('CMake', '3.27.7','', SYSTEM),
+]
+
+dependencies = [
+    ('JasPer', '2.0.33'),
+    ('libpng', '1.6.40'),
+    ('libjpeg-turbo', '2.1.5.1'),
+]
+
+# some builds (eg NCL) look for grib2c instead of g2c, so symlink required
+postinstallcmds = ['ln -s %(installdir)s/lib64/libg2c.so %(installdir)s/lib64/libgrib2c.so']
+
+sanity_check_paths = {
+    'files': ['lib/libg2c.%s' % SHLIB_EXT],
+    'dirs': ['include'],
+}
+
+moduleclass = 'data'
