@@ -1,0 +1,37 @@
+easyblock = 'ConfigureMake'
+
+name = "NCO"
+version = '4.8.1'
+homepage = "http://nco.sourceforge.net"
+description = """manipulates and analyzes data stored in netCDF-accessible formats, including DAP, HDF4, and HDF5"""
+
+toolchain = {'name': 'gompi', 'version': '2023a'}
+toolchainopts = {}
+
+sources = ['nco-%(version)s.tar.gz']
+source_urls = ['http://nco.sourceforge.net/src']
+
+patches = []
+
+dependencies = [
+    ('expat', '2.5.0'),
+    ('GSL', '2.7'),
+    ('UDUNITS', '2.2.28'),
+    ('netCDF', '4.9.2'),
+#    ('librx', ),
+#    ('curl', ),
+#    ('libxml2', ),
+#    ('libdap', ),
+#    ('bison', ),
+]
+
+builddependencies = [
+    ('ANTLR', '2.7.7'),       # incl C++
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ["."]
+}
+
+moduleclass = 'tools'
