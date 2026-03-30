@@ -1,0 +1,23 @@
+easyblock = 'ConfigureMake'
+
+name = "ANTLR"
+version = "2.7.7"
+homepage = "http://www.antlr2.org"
+description = """ANother Tool for Language Recognition"""
+
+toolchain = {'name': 'GCC', 'version': '12.3.0'}
+
+assert version.startswith('2'), version
+sources = ['antlr-%(version)s.tar.gz']
+source_urls = ['http://www.antlr2.org/download']
+
+patches = ['ANTLR-%(version)s_cpp-headers.patch']
+
+configopts = "--disable-examples --disable-csharp"
+
+sanity_check_paths = {
+    'files': ['bin/antlr'],
+    'dirs': []
+}
+
+moduleclass = 'lang'
