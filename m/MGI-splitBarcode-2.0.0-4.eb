@@ -1,0 +1,31 @@
+easyblock = 'PackedBinary'
+
+name = 'MGI-splitBarcode'
+version = '2.0.0'
+versionsuffix = '-4'
+
+homepage = "https://global-mgitech.com/"
+description = """splitBarcode is the official bioinformatics tool developed by MGI 
+	Tech designed to demultiplex high-throughput sequencing data generated on 
+	MGI sequencing platforms (such as the DNBSEQ series).
+  """
+
+toolchain = {'name': 'system', 'version': 'system'}
+
+sources = [ { 'filename': 'splitBarcode_V2.0.0_release_4_basecallLite_MGI.tar.gz' },
+            { 'filename': 'Testing_Materials.tar.gz'},
+]
+
+files_to_copy = [
+    (['bin/*'], 'bin'),
+    (['lib/*'], 'lib'),
+]
+
+postinstallcmds = ['cp -r Testing_Materials %(installdir)s/Testing_Materials']
+
+sanity_check_paths = {
+    'files': ['bin/splitBarcode'],
+    'dirs': ['bin','lib'],
+}
+
+moduleclass = 'bio'
