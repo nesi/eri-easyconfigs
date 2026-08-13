@@ -1,0 +1,30 @@
+easyblock = 'Tarball'
+
+name = 'RStudio-Server'
+version = '2026.07.1-147'
+
+homepage = 'https://www.rstudio.com/'
+description = """RStudio-Server for OpenOnDemand."""
+
+toolchain = SYSTEM
+
+# Download the RHEL RPM directly and unpack it in place: the RPM only ships
+# usr/lib/rstudio-server/*, so lift that directory to the top level so the
+# Tarball easyblock finds a single unpacked dir with bin/, db/, resources/, www/.
+source_urls = ['https://download2.rstudio.org/server/rhel9/x86_64/']
+sources = [{
+    'filename': 'rstudio-server-rhel-%(version)s-x86_64.rpm',
+    'extract_cmd': "rpm2cpio %s | cpio -idm && mv usr/lib/rstudio-server rstudio-server-%(version)s && rm -rf usr",
+}]
+checksums = ['271039f214a43148d2d0db6dc9585be56650ed7d77dcb7b2426ddb75906c01f8']
+
+sanity_check_paths = {
+    'files': ['bin/rstudio-server' , 'bin/rserver', 'bin/rserver-pam'],
+    'dirs': ['bin', 'db', 'resources' , 'www'],
+}
+
+
+#modextrapaths = { 'PATH': 'data' }
+
+moduleclass = 'lang'
+
