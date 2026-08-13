@@ -1,0 +1,20 @@
+name = 'CMake'
+version = '4.4.2'
+
+homepage = 'https://www.cmake.org'
+
+description = """
+ CMake, the cross-platform, open-source build system.  CMake is a family of
+ tools designed to build, test and package software.
+"""
+
+toolchain = SYSTEM
+
+source_urls = ['https://cmake.org/files/v%(version_major_minor)s']
+sources = [SOURCELOWER_TAR_GZ]
+checksums = ['1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d']
+
+osdependencies = [('openssl-devel', 'libssl-dev', 'libopenssl-devel'), 'ncurses-devel']
+
+moduleclass = 'devel'
+
