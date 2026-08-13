@@ -14,7 +14,15 @@ source_urls = ['https://cmake.org/files/v%(version_major_minor)s']
 sources = [SOURCELOWER_TAR_GZ]
 checksums = ['1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d']
 
-osdependencies = [('openssl-devel', 'libssl-dev', 'libopenssl-devel'), 'ncurses-devel']
+# system OpenSSL is too old (< 3.0.0) for CMake's bundled curl on this OS, so
+# pull in a real OpenSSL >= 3.0.0 via the OpenSSL/3 wrapper (builds 3.2.1 from
+# source since the system OpenSSL is only 1.1.1k) instead of the system one
+use_openssl = True
+
+dependencies = [
+    ('OpenSSL', '3', '', SYSTEM),
+    ('ncurses', '6.4', '', ('GCCcore', '12.3.0')),
+]
 
 moduleclass = 'devel'
 
