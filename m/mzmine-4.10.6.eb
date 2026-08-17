@@ -1,0 +1,45 @@
+easyblock = 'Tarball'
+
+name = 'mzmine'
+version = '4.10.6'
+
+homepage = 'https://mzmine.github.io/'
+description = """mzmine is an open-source software for mass-spectrometry data processing, with the main
+focus on LC-MS data. It is well suited for metabolomics/lipidomics applications, providing
+tools for peak detection/deconvolution, spectral deconvolution, isotope pattern recognition,
+alignment, normalization, identification, and integration with spectral databases.
+
+This is the official "Linux portable" bundle: it ships its own bundled JRE (lib/runtime), so it
+does NOT need a separate Java module dependency. It also bundles vendor raw-file format
+converter helper tools (Bruker .baf, Waters .raw, Thermo .raw, Sciex .wiff2) under
+external_tools/.
+"""
+
+toolchain = SYSTEM
+
+# Official upstream release asset for the mzmine 4.10.6 Linux portable build.
+# Verified sha256 matches the pre-deployed copy at
+# /agr/persist/projects/2026_metabolomics/apps/mzmine-4.10.6/ exactly.
+source_urls = ['https://github.com/mzmine/mzmine/releases/download/v%(version)s/']
+sources = ['mzmine_Linux_portable-%(version)s.zip']
+checksums = ['6ac918014058455501368905312c578c5736bfc634cbc0a0b40d5074d0c8ce40']
+
+# The zip stores everything without the executable bit set, so the launcher and the
+# vendor-format-converter helper binaries under external_tools/ need it set explicitly.
+postinstallcmds = [
+    'chmod +x %(installdir)s/bin/mzmine',
+    'chmod +x %(installdir)s/external_tools/thermo_raw_file_parser/ThermoRawFileParser',
+    'chmod +x %(installdir)s/external_tools/thermo_raw_file_parser/createdump',
+    'chmod +x %(installdir)s/external_tools/sciex_wiff2/Server-linux-x64/dotnet',
+    'chmod +x %(installdir)s/external_tools/sciex_wiff2/Server-linux-x64/createdump',
+    'find %(installdir)s/lib/runtime/bin -type f -exec chmod +x {} \\;',
+]
+
+sanity_check_paths = {
+    'files': ['bin/mzmine'],
+    'dirs': ['lib/runtime', 'lib/app'],
+}
+
+modextrapaths = {'PATH': 'bin'}
+
+moduleclass = 'bio'

@@ -1,0 +1,44 @@
+easyblock = 'Tarball'
+
+name = 'MSDIAL'
+version = '5.5'
+
+homepage = 'https://systemsomicslab.github.io/compms/msdial/main.html'
+description = """MS-DIAL is a data processing software for mass spectrometry based metabolomics and lipidomics.
+It supports peak detection, deconvolution, alignment, and metabolite/lipid identification for
+GC/MS, LC/MS, and ion mobility MS data.
+
+This is the self-contained .NET 8 Linux console (CLI) build, bundling its own CoreCLR runtime
+(libcoreclr.so, libhostfxr.so, etc.), so it does NOT need a separate dotNET-Core module.
+"""
+
+toolchain = SYSTEM
+
+# Official upstream release asset for the MS-DIAL 5.5 console/CLI Linux build (net8, self-contained).
+# Verified sha256 matches the pre-deployed copy at
+# /agr/persist/projects/2026_metabolomics/apps/MSDIAL_v5.5/ exactly.
+source_urls = ['https://github.com/systemsomicslab/MsdialWorkbench/releases/download/MSDIAL-v5.5.260323/']
+# The upstream zip stores lib/x64 entries with backslash path separators (Windows-built archive),
+# which makes unzip emit a non-fatal warning and exit 1. Tolerate exit code 1 (warning only);
+# any other non-zero exit code is a genuine extraction failure.
+sources = [{
+    'filename': 'MSDIAL.console.v5.5.260323-linux-net8.zip',
+    'extract_cmd': "unzip -qq %s || [ $? -eq 1 ]",
+}]
+checksums = ['05d7b8a08acf3a4fdb61fcfd6d315764a36dc2afba51fae935971a43c01a3681']
+
+# The zip has no wrapping top-level directory: MSDIALCUI (the entry executable) and the managed
+# DLLs sit directly at the root, alongside lib/ (lib/Reifycs/RDAM.dll) and x64/ (x64/libinchi.dll).
+# The extracted MSDIALCUI does not carry the executable bit, so set it explicitly.
+postinstallcmds = ['chmod +x %(installdir)s/MSDIALCUI']
+
+sanity_check_paths = {
+    'files': ['MSDIALCUI', 'MsdialCore.dll', 'libcoreclr.so', 'libhostfxr.so'],
+    'dirs': ['lib', 'x64'],
+}
+
+sanity_check_commands = ['MSDIALCUI --help']
+
+modextrapaths = {'PATH': ''}
+
+moduleclass = 'bio'
