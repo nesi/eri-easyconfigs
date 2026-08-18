@@ -13,7 +13,7 @@ toolchain = SYSTEM
 
 builddependencies = [
     ('pkgconf', '1.8.0'),
-    ('Perl', '5.38.0'),
+    ('Perl', '5.38.2'),
 ]
 
 # This easyconfig will wrap the OpenSSL installation in the host system.

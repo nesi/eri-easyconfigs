@@ -28,7 +28,7 @@ exts_list = [
                }),
             ]
 
-#postinstallcmds = ['cd %(installdir)s && mkdir scripts']
+postinstallcmds = ['cd %(installdir)s && mkdir scripts']
 #postinstallcmds = ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/rfplasmid.py']
 #postinstallcmds = ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/getdb.sh']                                                                        >postinstallcmds += ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/classification.R']
 #postinstallcmds = ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/training.R']

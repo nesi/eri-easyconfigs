@@ -20,7 +20,7 @@ checksums = ['1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d']
 use_openssl = True
 
 dependencies = [
-    ('OpenSSL', '3', '', SYSTEM),
+    ('OpenSSL', '3.3.1', '', ('GCCcore', '12.3.0')),
     ('ncurses', '6.4', '', ('GCCcore', '12.3.0')),
 ]
 
