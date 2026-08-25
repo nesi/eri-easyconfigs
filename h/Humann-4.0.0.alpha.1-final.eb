@@ -1,0 +1,22 @@
+easyblock = 'Conda'
+
+name = 'Humann'
+version = '4.0.0.alpha.1-final'
+
+homepage = 'https://huttenhower.sph.harvard.edu/humann'
+description = """Pipeline for efficiently and accurately determining the coverage and abundance of microbial pathways in a community from metagenomic data."""
+
+toolchain = SYSTEM
+
+environment_file = 'Humann-%(version)s.yml'
+sources = [environment_file]
+
+builddependencies = [('Miniforge3','24.9.0-0')]
+
+# install additional packages
+
+prep_env = "PATH=%(installdir)s/bin:$PATH "
+
+sanity_check_commands = ['humann --help']
+
+moduleclass = 'bio'
