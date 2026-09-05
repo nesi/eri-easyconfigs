@@ -362,6 +362,58 @@ authoritative — trust it over guessing from the filename.
   example: `/agr/persist/apps/containers/R/geospatial_latest.sif`, pulled
   April 2025, undated in any module, silently stale. Always pull a numbered
   tag and record the pull date/tag in the easyconfig.
+- **A dev-tested script that hardcodes a personal path will break for the
+  next person, even a genuine admin, in ways that look like permission
+  bugs.** `slurm/build-foss-2026.1.sl`'s first version hardcoded `REPO` to
+  one person's scratch checkout, and `UPSTREAM` to their personal clone of
+  `easybuild-easyconfigs`. It ran fine for that person, then failed for
+  `eri-apps-admin` running their *own* clone with
+  `touch: cannot touch '.../slurm/logs/completed_targets.txt': Permission
+  denied` -- the script was still writing into the original person's
+  directory, which admin could read (world `r-x`) but not write. Fix:
+  derive `REPO` from the script's own location
+  (`REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"`), not a
+  hardcoded path -- this makes the script work identically from any
+  checkout. Also dropped the whole custom "completed targets" marker-file
+  mechanism entirely once this was found -- it was both the source of the
+  permission bug and genuinely redundant: `eb --robot` already detects an
+  already-installed target and skips it natively, in a few seconds, with
+  no separate bookkeeping needed. If you're tempted to add a resume-marker
+  file to a driver script, check whether EasyBuild's own idempotency
+  already covers it first.
+- **The upstream `easybuild-easyconfigs` clone used to live in one
+  person's personal scratch space** (`EASYBUILD_ROBOT_PATHS` in
+  `ebinit-2026.sh`, and the same path hardcoded again in
+  `slurm/build-foss-2026.1.sl`) -- reachable read-only by anyone (world
+  `r-x`), so it silently worked for a while, but was a real single point of
+  failure: a scratch-retention cleanup on that one account would have
+  broken every future 2026.1-generation build, dev or production, for
+  everyone. Moved 2026-09-06 to
+  `/agr/persist/apps/share/upstream-easybuild-easyconfigs` (writable by
+  the `eri_support` group, matching where `ebinit.sh`/`ebinit-2026.sh`
+  themselves already live), re-pinned to the exact same commit
+  (`a5d92f424ff25953d99b6332485b0c70d141ba2a`) via `git fetch origin
+  <sha> && git checkout FETCH_HEAD` on a shallow clone, and verified
+  byte-identical to the original (`diff -rq`) before switching over. Both
+  `ebinit-2026.sh` and the driver script were updated to point at the new
+  location; if you ever need to relocate it again, update both, and keep
+  them in sync since neither reads the other's copy of the path.
+- **`EasyBuild/5.4.0` was only ever built as a module in one person's
+  personal dev tree, never into the production module tree.** Discovered
+  when `eri-apps-admin` ran the driver script for a real production build
+  and got `Lmod has detected the following error: The following module(s)
+  are unknown: "EasyBuild/5.4.0"` -- `/agr/persist/apps/eri_rocky8/modules/
+  all/EasyBuild/` only had `4.8.1`/`4.9.2`. `ebinit-2026.sh` only *loads*
+  EasyBuild/5.4.0 by name; nothing builds it automatically for a tree that
+  doesn't have it yet. Whoever builds into a *new* installation tree for
+  the first time (a fresh admin account, a fresh personal scratch tree)
+  needs to bootstrap it themselves first, following the same procedure as
+  the original bootstrap (see "Why EasyBuild 5.4.0 is a hard requirement"
+  above): a throwaway `pip install easybuild==5.4.0` venv as the *builder*
+  (not the tree's existing older EasyBuild, which hits the self-hosting
+  bug), then `eb --robot=<upstream clone> e/EasyBuild-5.4.0.eb` using that
+  venv's `eb`. After that one-time step, `ebinit-2026.sh` finds it
+  normally for that tree from then on.
 
 ## Dev → test → production workflow (from `README.md`)
 

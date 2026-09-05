@@ -8,7 +8,7 @@ eb --robot -D r/R-4.6.1-foss-2026.1-MPI.eb
 ```
 
 **Upstream pin:** `easybuild-easyconfigs` @ `a5d92f424ff25953d99b6332485b0c70d141ba2a` (2026-09-03), cloned at
-`/agr/scratch/projects/2023-nesi_slurm_testing/mattb/upstream-ecs`.
+`/agr/persist/apps/share/upstream-easybuild-easyconfigs` (shared, persistent location -- moved here 2026-09-06 from a personal scratch dir, which was a real fragility risk: any scratch-retention cleanup would have broken every future 2026.1-generation build, dev or production). `ebinit-2026.sh` and `slurm/build-foss-2026.1.sl` both hardcode this path independently; keep them in sync if it moves again.
 
 Legend: `[x]` already installed in this user's scratch tree at generation time; `[ ]` still to build. `local` = file lives in this repo; `upstream` = resolved from the pinned clone via `EASYBUILD_ROBOT_PATHS` (see the `easybuild` skill for why this repo is never itself on the robot path).
 

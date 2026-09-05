@@ -66,15 +66,14 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOGDIR="${REPO}/slurm/logs"
 
 # Points at a clone of https://github.com/easybuilders/easybuild-easyconfigs
-# (develop branch), used as EASYBUILD_ROBOT_PATHS by ebinit-2026.sh. This
-# currently lives in one person's personal scratch space -- fragile (a
-# scratch-retention cleanup would break every future 2026.1-generation
-# build, dev or production) but not yet relocated to a shared location.
-# Override with the UPSTREAM_ECS_CLONE env var if you have a different
-# clone; otherwise this default must stay reachable (at least read-only)
-# for this script -- and for ebinit-2026.sh itself, which hardcodes the
-# same path -- to work at all.
-UPSTREAM="${UPSTREAM_ECS_CLONE:-/agr/scratch/projects/2023-nesi_slurm_testing/mattb/upstream-ecs/easybuild/easyconfigs}"
+# (develop branch), used as EASYBUILD_ROBOT_PATHS by ebinit-2026.sh. Lives
+# in this shared, persistent location (moved here from a personal scratch
+# dir, which was a real fragility risk -- a scratch-retention cleanup would
+# have broken every future 2026.1-generation build, dev or production).
+# Override with the UPSTREAM_ECS_CLONE env var if you need a different
+# clone for some reason; otherwise this default must stay in sync with
+# ebinit-2026.sh, which hardcodes the same path independently.
+UPSTREAM="${UPSTREAM_ECS_CLONE:-/agr/persist/apps/share/upstream-easybuild-easyconfigs/easybuild/easyconfigs}"
 
 mkdir -p "${LOGDIR}"
 

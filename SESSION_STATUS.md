@@ -241,6 +241,36 @@ GPFS regardless of when this resumes.
 Work continued instead on Phase 5 (app migration) and/or Phase 7 (SLURM
 driver) -- see below for what was done there.
 
+### Production build attempt by eri-apps-admin -- 2 real bugs found and fixed
+
+`eri-apps-admin` ran `./slurm/build-foss-2026.1.sl` directly (not via
+`sbatch`) from their own production clone and hit two real bugs, both now
+fixed (see the easybuild skill for full detail):
+
+1. `touch: cannot touch '.../slurm/logs/completed_targets.txt': Permission
+   denied` -- the driver hardcoded `REPO`/`UPSTREAM`/`COMPLETED` to one
+   person's scratch checkout. Fixed: `REPO` now derives from the script's
+   own location; the whole custom completed-targets marker file was
+   removed (redundant -- `eb --robot` already skips already-installed
+   targets natively). Verified working end-to-end again after the fix (ran
+   the driver for real, all 4 targets correctly resolved/skipped).
+2. `Lmod ... unknown module "EasyBuild/5.4.0"` -- it was only ever built
+   into one person's personal dev tree, never into the production module
+   tree. **Not something I can fix from here** (no admin privileges) --
+   `eri-apps-admin` needs to bootstrap it themselves once, following the
+   same procedure as the original bootstrap (throwaway pip venv as
+   builder, then `eb --robot=<upstream clone> e/EasyBuild-5.4.0.eb`). Exact
+   commands given directly to the user; not yet confirmed done.
+
+**Also relocated the upstream `easybuild-easyconfigs` clone** from a
+personal scratch dir to `/agr/persist/apps/share/upstream-easybuild-
+easyconfigs` (shared, `eri_support`-group-writable), re-pinned to the exact
+same previously-validated commit and verified byte-identical before
+switching over. Updated both `ebinit-2026.sh` and the driver script to
+point at the new location. This was a real, independently-discovered
+fragility (not something admin hit yet, but would have eventually) --
+fixed proactively once flagged.
+
 ## Once foss/2026.1 finishes
 
 1. Verify per the plan's Verification section: `module load foss/2026.1`,
