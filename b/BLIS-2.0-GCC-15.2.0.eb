@@ -1,0 +1,50 @@
+name = 'BLIS'
+version = '2.0'
+
+homepage = 'https://github.com/flame/blis/'
+description = """BLIS is a portable software framework for instantiating high-performance
+BLAS-like dense linear algebra libraries."""
+
+toolchain = {'name': 'GCC', 'version': '15.2.0'}
+toolchainopts = {'openmp': True}
+
+source_urls = ['https://github.com/flame/blis/archive/']
+sources = ['%(version)s.tar.gz']
+checksums = ['08bbebd77914a6d1a43874ae5ec2f54fe6a77cba745f2532df28361b0f1ad1b3']
+
+builddependencies = [
+    ('Python', '3.14.2'),
+    ('Perl', '5.42.0'),
+]
+
+runtest = 'check'
+
+# eri_rocky8 note: BLIS's own `make install` corrupts any install path
+# containing a literal '@' -- and this cluster's $USER (and therefore the
+# personal-scratch EASYBUILD_PREFIX every non-admin build uses) is
+# "bixleym@agresearch.co.nz". Confirmed by hand: `make install` completes
+# with exit 0 and writes a fully correct, complete install tree (headers,
+# lib/libblis.{a,so,so.4,so.4.0.0}, pkgconfig, share/blis/*) -- just at the
+# WRONG path, with the literal substring "@agresearch" silently deleted
+# from the prefix (".../bixleym@agresearch.co.nz/..." becomes
+# ".../bixleym.co.nz/..."). This is the well-known GNU libtool relink-step
+# bug where an install prefix containing '@' breaks libtool's own
+# `sed 's@OLD@NEW@'`-style path substitution (BLIS uses libtool for its
+# versioned .so.4/.so.4.0.0 shared library, which is what triggers the
+# relink step) -- not a BLIS-specific bug, so any other package doing
+# versioned-shared-library relinking via libtool is a candidate for the
+# same failure. Confirmed the corruption is exactly "delete the literal
+# substring '@agresearch'" by diffing the expected vs actual install path
+# byte-for-byte.
+#
+# Fix: let `make install` write to its (deterministically) wrong location,
+# then move the result into the real installdir before EasyBuild's sanity
+# check runs. Using bash's ${var/pattern/replacement} rather than sed for
+# the path transform, deliberately -- sed's own @-delimited substitution
+# is the root cause, so avoid reintroducing it here.
+postinstallcmds = [
+    'mangled="%(installdir)s"; mangled="${mangled/@agresearch/}"; '
+    'test -d "$mangled" && rm -rf "%(installdir)s" && mv "$mangled" "%(installdir)s"',
+]
+
+moduleclass = 'numlib'

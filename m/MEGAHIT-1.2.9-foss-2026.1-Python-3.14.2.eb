@@ -1,0 +1,26 @@
+easyblock = 'CMakeMake'
+
+name = 'MEGAHIT'
+version = '1.2.9'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/voutcn/megahit'
+description = """An ultra-fast single-node solution for large and complex
+ metagenomics assembly via succinct de Bruijn graph"""
+
+toolchain = {'name': 'foss', 'version': '2026.1'}
+
+github_account = 'voutcn'
+source_urls = [GITHUB_LOWER_SOURCE]
+sources = ['v%(version)s.tar.gz']
+checksums = ['09026eb07cc4e2d24f58b0a13f7a826ae8bb73da735a47cb1cbe6e4693118852']
+
+dependencies = [
+     ('Python', '3.14.2'),
+               ]
+
+# old SYSTEM CMake 3.27.7 pin was a 2023a-generation artifact; point at the
+# already-built CMake/4.2.1-GCCcore-15.2.0 instead (same fix already applied
+# to m/MMseqs2-15-6f452-gompi-2026.1.eb in this repo).
+builddependencies = [('CMake', '4.2.1', '', ('GCCcore', '15.2.0'))]
+

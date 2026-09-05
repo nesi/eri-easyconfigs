@@ -1,0 +1,46 @@
+easyblock = 'PythonPackage'
+
+name = 'CheckM'
+version = '1.2.4'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/Ecogenomics/CheckM'
+description = """CheckM provides a set of tools for assessing the quality of genomes recovered from isolates,
+ single cells, or metagenomes."""
+
+toolchain = {'name': 'foss', 'version': '2026.1'}
+
+source_urls = ['https://github.com/Ecogenomics/CheckM/archive']
+sources = ['v%(version)s.tar.gz']
+checksums = ['4fedc79cb64dba268d7de155431a05c7ee3866076a077bbbd2f304d55b0f25ee']
+
+# Dependencies:
+# https://github.com/Ecogenomics/CheckM/blob/master/setup.py
+# NOTE: prodigal 2.6.3 and HMMER 3.3.2 do not yet exist for GCCcore-15.2.0 /
+# gompi-2026.1 anywhere (checked upstream easyconfigs clone and this
+# cluster's foss-2026.1-generation builds) -- these versions are kept
+# unchanged (no newer confirmed-available alternative either) and are a
+# BLOCKING prerequisite for this file actually building. See report.
+dependencies = [
+    ('Python', '3.14.2'),
+    ('pplacer', '1.1.alpha19', '', SYSTEM),
+    ('prodigal', '2.6.3'),
+    ('HMMER', '3.3.2'),
+    ('CheckM-Database', '2015_01_16', '', SYSTEM),
+]
+
+download_dep_fail = True
+use_pip = True
+
+sanity_check_paths = {
+    'files': ['bin/checkm'],
+    'dirs': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+sanity_check_commands = ["checkm test %(builddir)s/checkm_test_results"]
+
+sanity_pip_check = True
+
+moduleclass = 'bio'
+
+

@@ -6,13 +6,25 @@ version = '2.49.0'
 homepage = 'https://www.reannz.co.nz/products-and-services/filesender/'
 description = """Send large files quickly and securely using REANNZ FileSender."""
 
-toolchain = {'name': 'foss', 'version': '2023a'}
+toolchain = {'name': 'foss', 'version': '2026.1'}
 
+# NOTE (pre-existing oddity, not fixed here per porting instructions): this
+# is a pure Python-tools file-transfer utility with no apparent compute need
+# for a full compiler toolchain -- a foss toolchain (here bumped 2023a ->
+# 2026.1) seems unnecessary but is left as declared. Also pre-existing and
+# not fixed here: postinstallcmds below fetches
+# https://raw.githubusercontent.com/filesender/filesender/refs/heads/development/...
+# -- a moving, unpinned GitHub branch, not a tagged/pinned release.
 dependencies = [
-    ('Python', '3.11.6'),
+    ('Python', '3.14.2'),
 ]
 
-builddependencies = [('CMake', '3.27.7', '', SYSTEM)]
+# old SYSTEM CMake 3.27.7 pin was a 2023a-generation artifact; point at the
+# already-built CMake/4.2.1-GCCcore-15.2.0 instead (same fix already applied
+# to m/MMseqs2-15-6f452-gompi-2026.1.eb in this repo). Note this builddep
+# looks unused anyway for a pure-Python wheel install -- part of the same
+# pre-existing oddity above, left as-is.
+builddependencies = [('CMake', '4.2.1', '', ('GCCcore', '15.2.0'))]
 exts_defaultclass = 'PythonPackage'
 
 exts_default_options = {

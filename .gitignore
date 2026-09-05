@@ -1,0 +1,4 @@
+# Runtime artifacts from slurm/build-foss-2026.1.sl -- per-run build logs
+# and the resumability marker, not source. The driver script itself
+# (slurm/build-foss-2026.1.sl) is tracked as normal.
+slurm/logs/

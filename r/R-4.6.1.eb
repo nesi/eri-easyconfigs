@@ -1,0 +1,56 @@
+easyblock = 'Binary'
+
+name = 'R'
+version = '4.6.1'
+
+homepage = 'https://www.r-project.org/'
+description = """R (rocker/geospatial container build). Complete tidyverse +
+ geospatial (sf/terra/GDAL/PROJ/GEOS) R environment, built and maintained
+ upstream by the Rocker Project (https://rocker-project.org/images/). Wrapped
+ here as an Apptainer-backed EasyBuild module rather than compiled from
+ source: the geospatial dependency stack (GDAL/PROJ/GEOS plus their C/C++
+ toolchains) is exactly what the Rocker maintainers already solve and keep
+ current, and duplicating it as a source build buys nothing.
+ For HPC-native, cluster-parallel R with Rmpi/doMPI (which this container
+ does not provide), see R/%(version)s-foss-2026.1-MPI instead."""
+
+toolchain = SYSTEM
+
+sources = []
+checksums = []
+
+dependencies = [('Apptainer', '1.2.5', '', SYSTEM)]
+
+# Binary easyblock's own extract_step() indexes self.src[0] unconditionally
+# when extract_sources=False, which crashes on an empty sources list; the
+# base EasyBlock.extract_step() handles an empty list fine, so use that.
+extract_sources = True
+# Skip Binary's default copy_dir(start_dir, installdir) -- there's no
+# extracted source to copy from. postinstallcmds does the real work.
+install_cmds = ['true']
+
+# Pin the numbered rocker tag, never 'latest' -- eRI already has a stale,
+# undated 'geospatial_latest.sif' from April 2025 as a cautionary example.
+postinstallcmds = [
+    'apptainer pull --force %(installdir)s/geospatial-%(version)s.sif'
+    ' docker://rocker/geospatial:%(version)s',
+    'mkdir -p %(installdir)s/bin',
+    "printf '#!/bin/bash\\nexec apptainer exec --bind /agr/persist,/agr/scratch"
+    " %(installdir)s/geospatial-%(version)s.sif R \"$@\"\\n'"
+    " > %(installdir)s/bin/R",
+    "printf '#!/bin/bash\\nexec apptainer exec --bind /agr/persist,/agr/scratch"
+    " %(installdir)s/geospatial-%(version)s.sif Rscript \"$@\"\\n'"
+    " > %(installdir)s/bin/Rscript",
+    'chmod +x %(installdir)s/bin/R %(installdir)s/bin/Rscript',
+]
+
+sanity_check_paths = {
+    'files': ['bin/R', 'bin/Rscript'],
+    'dirs': [],
+}
+sanity_check_commands = [
+    'R --version',
+    'Rscript -e "library(sf); library(terra); library(tidyverse)"',
+]
+
+moduleclass = 'lang'

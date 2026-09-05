@@ -1,0 +1,47 @@
+easyblock = 'ConfigureMake'
+
+name = "NCO"
+version = '4.8.1'
+homepage = "http://nco.sourceforge.net"
+description = """manipulates and analyzes data stored in netCDF-accessible formats, including DAP, HDF4, and HDF5"""
+
+toolchain = {'name': 'gompi', 'version': '2026.1'}
+toolchainopts = {}
+
+sources = ['nco-%(version)s.tar.gz']
+source_urls = ['http://nco.sourceforge.net/src']
+
+patches = []
+
+# expat 2.7.3 (GCCcore-15.2.0) confirmed already built on this cluster.
+# GSL 2.8 (GCC-15.2.0), UDUNITS 2.2.28 (GCCcore-15.2.0) confirmed as real
+# upstream easyconfigs but NOT yet built here -- see report.
+# netCDF 4.10.0 (gompi-2026.1) confirmed as a real upstream easyconfig but
+# NOT yet built here, and is itself blocked on HDF5 2.1.1 (gompi-2026.1,
+# also not yet built) among its own dependencies -- see report.
+dependencies = [
+    ('expat', '2.7.3'),
+    ('GSL', '2.8'),
+    ('UDUNITS', '2.2.28'),
+    ('netCDF', '4.10.0'),
+#    ('librx', ),
+#    ('curl', ),
+#    ('libxml2', ),
+#    ('libdap', ),
+#    ('bison', ),
+]
+
+builddependencies = [
+    # unqualified builddependency tuples resolve against NCO's own exact
+    # toolchain (gompi-2026.1), not its subtoolchains, unlike regular
+    # `dependencies` -- ANTLR is only built at GCC-15.2.0 (a gompi-2026.1
+    # subtoolchain), so needs an explicit toolchain tuple here
+    ('ANTLR', '2.7.7', '', ('GCC', '15.2.0')),  # incl C++
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ["."]
+}
+
+moduleclass = 'tools'

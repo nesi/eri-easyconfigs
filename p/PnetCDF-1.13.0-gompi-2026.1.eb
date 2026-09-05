@@ -1,0 +1,40 @@
+easyblock = 'ConfigureMake'
+
+name = 'PnetCDF'
+version = '1.13.0'
+
+homepage = 'https://trac.mcs.anl.gov/projects/parallel-netcdf'
+description = """Parallel netCDF: A Parallel I/O Library for NetCDF File Access"""
+
+toolchain = {'name': 'gompi', 'version': '2026.1'}
+
+# NOTE: upstream has no PnetCDF-1.13.0-*-2026.1.eb -- upstream skipped 1.13.0
+# for any toolchain past gompi-2024a and jumped straight to 1.14.1 for
+# gompi-2025a/2025b/2026.1, which additionally added a forced
+# 'autoreconf -f -i' preconfigopts and Autotools/Perl builddependencies not
+# present in any 1.13.0 easyconfig. That *may* mean 1.13.0's bundled
+# ~2022-era configure script needs the same autoreconf treatment to survive
+# GCC 15's stricter conformance checks (cf. the GMP 6.3.0 configure-script
+# conformance trap hit elsewhere in this toolchain generation) -- not
+# confirmed either way since this is a parse-time-only port, flagging as a
+# build-time risk to watch for rather than pre-emptively changing
+# easyblock options that aren't otherwise required by the toolchain bump.
+source_urls = ['https://parallel-netcdf.github.io/Release/']
+sources = ['pnetcdf-%(version)s.tar.gz']
+checksums = ['aba0f1c77a51990ba359d0f6388569ff77e530ee574e40592a1e206ed9b2c491']
+
+## preconfigopts = "MPIF77=mpiifort MPIF90=mpiifort MPICC=mpiicc MPICXX=mpiicpc "
+configopts = " --enable-shared "
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['ncmpidiff', 'ncmpidump', 'ncmpigen', 'ncoffsets',
+                                     'ncvalidator', 'pnetcdf-config', 'pnetcdf_version']] +
+             ['lib/lib%(namelower)s.a', 'lib/lib%%(namelower)s.%s' % SHLIB_EXT],
+    'dirs': ['include'],
+}
+
+modextravars = {
+    'PNETCDF': '%(installdir)s',
+}
+
+moduleclass = 'data'

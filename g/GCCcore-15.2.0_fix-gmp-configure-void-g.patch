@@ -1,0 +1,44 @@
+GMP 6.3.0's bundled configure script has an ancient K&R-style self-test
+("long long reliability test 1", extracted from tests/mpn/t-iord_u.c to work
+around an old Apple GCC 3.3 powerpc segfault) that declares `void g(){}` and
+then calls it with 6 arguments. Older GCC treated an empty-parens
+declaration as an unprototyped/K&R "unspecified arguments" signature and
+allowed this; GCC 15's tightened C conformance now hard-rejects it as a real
+error ("too many arguments to function 'g'; expected 0, have 6"), which
+makes ALL THREE of configure's ABI probes (m64/x32/m32) fail identically and
+aborts GCCcore's own "stage2_stuff" bootstrap sub-build of GMP (a separate
+PIC-static configure/build step, distinct from - and not covered by - the
+existing GCCcore-9.3.0_gmp-c99.patch, which only patches the in-tree
+Makefile.in path).
+
+Fix: give `g` a real prototype matching how it's actually called, so it
+compiles cleanly under both old and new GCC. `g`'s body is empty either way
+(it exists purely so the code compiles/links, not for its behavior), so this
+changes nothing about what the test actually checks.
+
+author: this repo (eri-easyconfigs), 2026-08-18
+
+Applied via the easyconfig's `('...patch', '../gmp-6.3.0')` sourcepath
+redirect (GMP is a separately-extracted sibling of gcc-15.2.0, not a
+subdirectory of it) - so this patch is written relative to gmp-6.3.0's own
+top-level directory, not gcc's.
+--- a/configure
++++ b/configure
+@@ -6568,7 +6568,7 @@
+
+ #if defined (__GNUC__) && ! defined (__cplusplus)
+ typedef unsigned long long t1;typedef t1*t2;
+-void g(){}
++void g(int p0,t2 p1,t1 p2,t2 p3,t2 p4,int p5){}
+ void h(){}
+ static __inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
+ {t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}
+@@ -8187,7 +8187,7 @@
+
+ #if defined (__GNUC__) && ! defined (__cplusplus)
+ typedef unsigned long long t1;typedef t1*t2;
+-void g(){}
++void g(int p0,t2 p1,t1 p2,t2 p3,t2 p4,int p5){}
+ void h(){}
+ static __inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
+ {t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}

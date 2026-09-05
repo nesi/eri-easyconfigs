@@ -1,0 +1,47 @@
+name = 'ESMF'
+version = '8.4.2'
+
+homepage = 'https://www.earthsystemcog.org/projects/esmf/'
+description = """The Earth System Modeling Framework (ESMF) is a suite of software tools for developing
+ high-performance, multi-component Earth science modeling applications."""
+
+toolchain = {'name': 'foss', 'version': '2026.1'}
+toolchainopts = {'usempi': True, 'openmp': True, 'cstd': 'c++11', 'pic': True}
+
+source_urls = ['https://github.com/esmf-org/esmf/archive/']
+sources = ['v%(version)s.tar.gz']
+patches = ['ESMF-6.1.1_libopts.patch']
+checksums = [
+    {'v8.4.2.tar.gz': '969304efa518c7859567fa6e65efd960df2b4f6d72dbf2c3f29e39e4ab5ae594'},
+    {'ESMF-6.1.1_libopts.patch': '3851627f07c32a7da55d99072d619942bd3a1d9dd002e1557716158e7aacdaf4'},
+]
+
+# old SYSTEM CMake 3.27.7 pin was a 2023a-generation artifact; point at the
+# already-built CMake/4.2.1-GCCcore-15.2.0 instead (same fix already applied
+# to m/MMseqs2-15-6f452-gompi-2026.1.eb in this repo).
+builddependencies = [
+    ('CMake', '4.2.1', '', ('GCCcore', '15.2.0'))
+]
+
+# netCDF 4.9.2 and netCDF-Fortran 4.6.1 do not exist for gompi-2026.1 upstream;
+# bumped to the confirmed-available gompi-2026.1 versions (4.10.0 / 4.6.3).
+# netCDF-C++4 stays at 4.3.1 -- available upstream and already ported locally
+# as n/netCDF-C++4-4.3.1-gompi-2026.1.eb. libarchive stays at 3.7.2 -- already
+# ported locally as l/libarchive-3.7.2-GCC-15.2.0.eb.
+dependencies = [
+    ('netCDF', '4.10.0'),
+    ('netCDF-Fortran', '4.6.3'),
+    ('netCDF-C++4', '4.3.1'),
+    ('libarchive', '3.7.2', '', ('GCC', '15.2.0')),
+]
+
+# disable errors from GCC 10+ on mismatches between actual and dummy argument lists (GCC 9 behaviour)
+prebuildopts = 'ESMF_F90COMPILEOPTS="${ESMF_F90COMPILEOPTS} -fallow-argument-mismatch"'
+
+buildopts = 'ESMF_NETCDF_INCLUDE=$EBROOTNETCDFMINFORTRAN/include '
+buildopts += 'ESMF_NETCDF_LIBS="`nc-config --libs` `nf-config --flibs` `ncxx4-config --libs`"'
+
+# too parallel causes the build to become really slow
+maxparallel = 8
+
+moduleclass = 'geo'

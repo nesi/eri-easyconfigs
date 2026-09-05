@@ -8,20 +8,24 @@ description = """
  tools designed to build, test and package software.
 """
 
-toolchain = {'name': 'GCCcore', 'version': '12.3.0'}
+toolchain = {'name': 'GCCcore', 'version': '15.2.0'}
 
 source_urls = ['https://cmake.org/files/v%(version_major_minor)s']
 sources = [SOURCELOWER_TAR_GZ]
 checksums = ['1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d']
 
 # system OpenSSL is too old (< 3.0.0) for CMake's bundled curl on this OS, so
-# pull in a real OpenSSL >= 3.0.0 via the OpenSSL/3 wrapper (builds 3.2.1 from
-# source since the system OpenSSL is only 1.1.1k) instead of the system one
+# pull in a real OpenSSL >= 3.0.0 via the OpenSSL/3 wrapper instead of the
+# system one. There is no GCCcore-15.2.0-toolchain, version-pinned OpenSSL
+# easyconfig upstream for this generation -- only the SYSTEM-toolchain
+# OpenSSL/3 wrapper module, already built on this cluster -- so depend on
+# that directly rather than a ('GCCcore', '15.2.0') variant that doesn't
+# exist.
 use_openssl = True
 
 dependencies = [
-    ('OpenSSL', '3.3.1', '', ('GCCcore', '12.3.0')),
-    ('ncurses', '6.4', '', ('GCCcore', '12.3.0')),
+    ('OpenSSL', '3', '', SYSTEM),
+    ('ncurses', '6.6', '', ('GCCcore', '15.2.0')),
 ]
 
 moduleclass = 'devel'

@@ -1,0 +1,58 @@
+easyblock = 'PythonBundle'
+
+name = 'RFPlasmid'
+version = '0.0.18'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/aldertzomer/RFPlasmid'
+description = """Predicting plasmid contigs from assemblies"""
+
+toolchain = {'name': 'foss', 'version': '2026.1'}
+
+# R now points at the source-built, real-dependency-chain R-4.6.1-foss-2026.1-MPI
+# (the container-based r/R-4.6.1.eb is toolchain = SYSTEM and does not fit a
+# foss-2026.1 dependency chain) -- see r/R-4.6.1-foss-2026.1-MPI.eb. That module
+# is not yet built on this cluster, so this dependency is currently BLOCKING,
+# as is the CheckM dependency below (CheckM itself is blocked on HMMER/prodigal
+# not existing yet for this generation). DIAMOND 2.1.9 and Jellyfish 2.3.0 also
+# do not yet exist for this toolchain generation anywhere -- versions kept
+# unchanged, all BLOCKING. See report.
+dependencies = [
+                 ('Python', '3.14.2'),
+                 ('CheckM','1.2.4','-Python-%(pyver)s'),
+                 ('DIAMOND','2.1.9'),
+                 ('Jellyfish','2.3.0'),
+                 ('R', '4.6.1', '-MPI', ('foss', '2026.1')),
+              ]
+
+use_pip = True
+
+exts_list = [
+               (name, version, {
+                   'source_urls': ['https://pypi.python.org/packages/source/r/rfplasmid/'],
+                   'source_tmpl': '%(namelower)s-%(version)s-py3-none-any.whl',
+#                   'checksums': ['45f2e380a82d75b1eb31ee27007197a55013b40d9b4cb6bd28457f9acce30b2e'],
+                   'modulename' : 'RFPlasmid'
+               }),
+            ]
+
+postinstallcmds = ['cd %(installdir)s && mkdir scripts']
+#postinstallcmds = ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/rfplasmid.py']
+#postinstallcmds = ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/getdb.sh']                                                                        >postinstallcmds += ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/classification.R']
+#postinstallcmds = ['cd %(installdir)s/scripts && wget https://raw.githubusercontent.com/aldertzomer/RFPlasmid/master/training.R']
+#postinstallcmds = ['chmod -R a+rx %(installdir)s/scripts']
+
+#Run the following command after the build. Tried adding it as a postinstallcmds which wasn't liked
+#rfplasmid --initialize
+
+modextrapaths={'PATH': 'scripts'}
+
+sanity_check_paths = {
+    'files': ['bin/rfplasmid'],
+    'dirs': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+sanity_check_commands = ["rfplasmid --help"]
+
+moduleclass = 'bio'
+
