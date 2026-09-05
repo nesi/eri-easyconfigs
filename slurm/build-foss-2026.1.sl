@@ -7,6 +7,13 @@
 #SBATCH --output=slurm/logs/%x-%j.log
 #
 # Ordered, resumable driver for the foss/2026.1 toolchain generation build.
+# Works identically for a dev build (as yourself) or a production build (as
+# eri-apps-admin) -- it derives all paths from wherever THIS script is
+# actually checked out, and installs to wherever `ebinit-2026.sh` points
+# for whichever user runs it. Don't hardcode a personal path here again --
+# see the "REPO" line below and the fix history in SESSION_STATUS.md for
+# why that was a real bug (a previous version hardcoded one person's
+# scratch checkout, which broke for every other user/checkout).
 #
 # WHY THIS DRIVER LOOKS THE WAY IT DOES
 # --------------------------------------
@@ -16,7 +23,15 @@
 # for free. Instead it calls `eb --robot` on a handful of TOP-LEVEL
 # easyconfig targets (the compiler, the toolchain, R) and lets EasyBuild's
 # own robot resolver walk the whole dependency chain per target, correctly
-# skipping anything already installed.
+# skipping anything already installed -- natively, via EasyBuild's own
+# already-installed detection. There is deliberately no separate
+# "completed targets" marker file: a previous version of this script had
+# one, and it caused a real bug (it lived under this repo's own checkout
+# path, so a different user/checkout either couldn't write to it, or
+# worse, silently trusted another user's marker instead of checking their
+# own actual install path). `eb --robot` re-checking an already-installed
+# target on every run costs a few seconds, not a rebuild -- that's a
+# trivial cost for correctness.
 #
 # This mirrors exactly how this generation was actually built and debugged
 # interactively (see SESSION_STATUS.md): every failure hit so far (Perl's
@@ -29,22 +44,39 @@
 # something this script can or should attempt to automate. So on any
 # failure, this script STOPS IMMEDIATELY (no automatic retry -- retrying
 # an unfixed failure just fails again, identically, wasting the whole
-# allocation) and leaves a clear marker for a human to pick up: fix the
-# specific package (see the `easybuild` skill for the fix pattern and
-# known traps), then resubmit this same script -- already-completed
-# targets are skipped via the completion marker file.
+# allocation): fix the specific package (see the `easybuild` skill for the
+# fix pattern and known traps), then resubmit this same script --
+# already-installed targets are skipped by EasyBuild itself, fast.
 #
 # See .claude/skills/easybuild/SKILL.md before touching this script or
 # diagnosing a failure it reports.
+#
+# PREREQUISITE: EasyBuild/5.4.0 must already be built as a module for
+# whichever user/tree runs this script (`ebinit-2026.sh` loads it by name,
+# it does not build it). If you see "Lmod ... unknown module EasyBuild/5.4.0",
+# that's this -- build it first:
+#   eb e/EasyBuild-5.4.0.eb
+# using a *working* EasyBuild 5.4.0 as the builder (not the site's older
+# default), e.g. a throwaway `pip install easybuild==5.4.0` venv -- see the
+# easybuild skill's "Why EasyBuild 5.4.0 is a hard requirement" section for
+# the exact self-hosting bug this works around.
 
 set -u
-REPO="/mnt/gpfs/scratch/projects/2023-nesi_slurm_testing/mattb/eri-easyconfigs"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOGDIR="${REPO}/slurm/logs"
-COMPLETED="${LOGDIR}/completed_targets.txt"
-UPSTREAM="/agr/scratch/projects/2023-nesi_slurm_testing/mattb/upstream-ecs/easybuild/easyconfigs"
+
+# Points at a clone of https://github.com/easybuilders/easybuild-easyconfigs
+# (develop branch), used as EASYBUILD_ROBOT_PATHS by ebinit-2026.sh. This
+# currently lives in one person's personal scratch space -- fragile (a
+# scratch-retention cleanup would break every future 2026.1-generation
+# build, dev or production) but not yet relocated to a shared location.
+# Override with the UPSTREAM_ECS_CLONE env var if you have a different
+# clone; otherwise this default must stay reachable (at least read-only)
+# for this script -- and for ebinit-2026.sh itself, which hardcodes the
+# same path -- to work at all.
+UPSTREAM="${UPSTREAM_ECS_CLONE:-/agr/scratch/projects/2023-nesi_slurm_testing/mattb/upstream-ecs/easybuild/easyconfigs}"
 
 mkdir -p "${LOGDIR}"
-touch "${COMPLETED}"
 
 # Ordered top-level targets. Each is resolved+built (with all its
 # dependencies) by a single `eb --robot` call. Order matters: each target
@@ -63,10 +95,6 @@ TARGETS=(
 )
 
 source /agr/persist/apps/share/ebinit-2026.sh
-
-is_completed() {
-    grep -qxF "$1" "${COMPLETED}" 2>/dev/null
-}
 
 # A build killed mid-package (OOM, walltime, a dropped SLURM step) leaves
 # a lock file and a partial build/ dir behind even though nothing is still
@@ -88,15 +116,10 @@ clean_stale_locks() {
 }
 
 for target in "${TARGETS[@]}"; do
-    if is_completed "${target}"; then
-        echo "=== SKIP (already completed): ${target} ==="
-        continue
-    fi
-
     name="$(basename "${target}" .eb)"
     logfile="${LOGDIR}/${name}.log"
 
-    echo "=== BUILDING: ${target} ==="
+    echo "=== RESOLVING/BUILDING: ${target} ==="
     echo "    log: ${logfile}"
 
     clean_stale_locks
@@ -105,8 +128,7 @@ for target in "${TARGETS[@]}"; do
     rc=$?
 
     if [ "${rc}" -eq 0 ]; then
-        echo "${target}" >> "${COMPLETED}"
-        echo "=== SUCCESS: ${target} ==="
+        echo "=== SUCCESS (or already installed): ${target} ==="
     else
         echo "=== FAILED (exit ${rc}): ${target} ===" >&2
         echo "Full log: ${logfile}" >&2

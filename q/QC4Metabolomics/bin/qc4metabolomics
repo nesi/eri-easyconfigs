@@ -1,0 +1,316 @@
+#!/usr/bin/env bash
+#
+# qc4metabolomics - launcher for the QC4Metabolomics Shiny app on eRI.
+#
+# Intended to be run inside an interactive OnDemand/desktop session (i.e. a
+# session with an X11 display and a browser available), on the SAME compute
+# node that will host the Apptainer instance stack. It is NOT a batch job.
+#
+# What it does:
+#   1. Makes sure the QC4Metabolomics Apptainer instance stack (mariadb,
+#      qc_process, ms_converter, qc_shiny, db_backup) is running, starting
+#      any missing piece, using the project's own images at
+#      /agr/persist/projects/2026_metabolomics/apps/QC4Metabolomics/.
+#   2. Polls the Shiny UI on port 3838 until it answers.
+#   3. Opens a browser pointed at it (falls back to printing the URL).
+#
+# This script does NOT stop the stack when it exits - the containers are
+# meant to keep running as a shared service for the project.
+#
+# WHY THIS DOESN'T USE --fakeroot (unlike the project's own run_qc.sh):
+# this account (and every real HPC account checked - only template accounts
+# like cloud-user/podman/testuser have entries) has no /etc/subuid or
+# /etc/subgid range, and newuidmap/newgidmap aren't setuid-root either - so
+# `apptainer instance start --fakeroot` silently dies moments after printing
+# "instance started successfully" (confirmed by hand: a one-shot
+# `exec --fakeroot ... whoami` works, but instance persistence never does,
+# with or without --writable-tmpfs/--overlay). That's a cluster config gap
+# for eRI admins to fix, not something scriptable around - so instead this
+# runs every instance as your own regular (non-root) user, which apptainer
+# supports natively. That requires three things fakeroot would otherwise
+# have papered over, each confirmed working by hand:
+#   - a REAL host directory bound onto any path a container writes outside
+#     its own bind-mounted data dirs (e.g. /run/mysqld, /run, shiny's log/
+#     lib dirs) - apptainer's --writable-tmpfs overlay upper layer fails
+#     with ENODATA/EINVAL for many writes (socket binds, chown to a uid
+#     other than your own, even plain new files in some cases) when it
+#     isn't backed by a real filesystem under a true (non-fakeroot) userns.
+#   - mariadb: skip its container's normal entrypoint (never runs here) and
+#     do first-run bootstrap (mariadb-install-db + creating the app's
+#     database/user) by hand; drop `--user=root` from mariadbd (we aren't
+#     root); mariadb's client tools need `--skip-ssl` too, not just the
+#     server, or they refuse to connect.
+#   - qc_shiny: its /init (s6-overlay) entrypoint hard-requires real root to
+#     chown things to the 'shiny' user, so this bypasses /init entirely and
+#     execs `shiny-server` directly, after two substitutions: an
+#     shiny-server.conf with `run_as` pointed at your own user instead of
+#     'shiny' (shiny-server refuses to start otherwise), and an
+#     Renviron.site containing the project's settings_demo.env - shiny-
+#     server resets the environment for the R session it spawns per app, so
+#     without this the app can see none of its MYSQL_*/QC4METABOLOMICS_*
+#     config (this is normally done by the image's own s6 cont-init script,
+#     which is skipped along with the rest of /init).
+# The mariadb and qc_shiny recipes above were validated end-to-end together
+# (real settings_demo.env, HTTP 200 from the actual Shiny UI). qc_process,
+# ms_converter and db_backup got the same no-fakeroot/real-bind-dir
+# treatment by analogy but were NOT independently exercised to the same
+# depth - if one of them misbehaves, check its log under $STATE_DIR first.
+
+set -euo pipefail
+
+APP_DIR="/agr/persist/projects/2026_metabolomics/apps/QC4Metabolomics"
+SHINY_PORT=3838
+SHINY_URL="http://127.0.0.1:${SHINY_PORT}"
+SHINY_WAIT_TIMEOUT=180   # seconds to wait for Shiny to answer once started
+MARIADB_WAIT_TIMEOUT=60  # seconds to wait for mariadb to accept connections
+POLL_INTERVAL=3
+if [ -n "${XDG_RUNTIME_DIR:-}" ] && [ -w "${XDG_RUNTIME_DIR}" ]; then
+    STATE_DIR="${XDG_RUNTIME_DIR}/qc4metabolomics-${USER}"
+else
+    STATE_DIR="/tmp/qc4metabolomics-${USER}"
+fi
+
+log() {
+    echo "[qc4metabolomics] $*" >&2
+}
+
+die() {
+    echo "[qc4metabolomics] ERROR: $*" >&2
+    exit 1
+}
+
+# Stop an instance (if running) and print the tail of its captured log, so a
+# failure is actually diagnosable instead of just "did not come up in time".
+# Also means the next invocation starts clean rather than seeing a
+# half-broken instance as "already running" and skipping past it.
+fail_instance() {
+    local name="$1" msg="$2"
+    apptainer instance stop "$name" >/dev/null 2>&1 || true
+    if [ -s "${STATE_DIR}/${name}.log" ]; then
+        log "last 20 lines of ${STATE_DIR}/${name}.log:"
+        tail -n 20 "${STATE_DIR}/${name}.log" >&2
+    fi
+    die "$msg"
+}
+
+require_cmd() {
+    command -v "$1" >/dev/null 2>&1 || die "required command not found: $1"
+}
+
+# Read a single KEY=value out of settings_demo.env (last match wins, same as
+# how the shell/R would see it). Assumes simple unquoted values, same as the
+# rest of that file - fine for the demo defaults it ships with.
+env_get() {
+    grep -E "^$1=" "${APP_DIR}/settings_demo.env" | tail -n1 | cut -d= -f2-
+}
+
+# True (0) if an apptainer instance with this name is currently running.
+# NOTE: `apptainer instance list <name>` always exits 0 and always prints a
+# header row, even when nothing matches - so "running" means more than 1
+# line of output, not just a zero exit code.
+instance_running() {
+    local name="$1"
+    [ "$(apptainer instance list "$name" 2>/dev/null | wc -l)" -gt 1 ]
+}
+
+# Clear any stale registration left by a previous failed attempt - a prior
+# run dying without a clean stop can leave apptainer's own bookkeeping
+# claiming the name is taken even though instance_running() (correctly)
+# said no - and a fresh `instance start` then refuses with "already exists".
+clear_stale() {
+    apptainer instance stop "$1" >/dev/null 2>&1 || true
+}
+
+start_mariadb() {
+    instance_running mariadb && return
+    log "starting mariadb..."
+    clear_stale mariadb
+
+    local first_run=0
+    [ -d demo/db/mysql ] || first_run=1
+
+    mkdir -p "${STATE_DIR}/mariadb_run"
+    apptainer instance start --writable-tmpfs --env-file settings_demo.env \
+        --bind demo/db:/var/lib/mysql \
+        --bind "${STATE_DIR}/mariadb_run":/run/mysqld \
+        sif/mariadb.sif mariadb
+
+    if [ "$first_run" -eq 1 ]; then
+        log "first run - bootstrapping mariadb data directory..."
+        apptainer exec instance://mariadb \
+            mariadb-install-db --datadir=/var/lib/mysql --auth-root-authentication-method=normal \
+            >"${STATE_DIR}/mariadb-install-db.log" 2>&1 \
+            || fail_instance mariadb "mariadb-install-db failed - see ${STATE_DIR}/mariadb-install-db.log"
+    fi
+
+    # detach fully (setsid+nohup+disown) so this survives the launcher
+    # script exiting once the browser has opened. No --user=root: we aren't
+    # root and mariadbd doesn't need to be told to run as a user we can't
+    # become anyway.
+    setsid nohup apptainer exec instance://mariadb \
+        mariadbd --skip_ssl --innodb-flush-method=fsync \
+        </dev/null >"${STATE_DIR}/mariadb.log" 2>&1 &
+    disown
+
+    log "waiting for mariadb to accept connections..."
+    local waited=0
+    until apptainer exec instance://mariadb mariadb-admin --skip-ssl ping --silent 2>/dev/null; do
+        sleep "$POLL_INTERVAL"
+        waited=$((waited + POLL_INTERVAL))
+        [ "$waited" -lt "$MARIADB_WAIT_TIMEOUT" ] || fail_instance mariadb "mariadb did not come up within ${MARIADB_WAIT_TIMEOUT}s"
+    done
+    log "mariadb up."
+
+    if [ "$first_run" -eq 1 ]; then
+        log "provisioning application database/user..."
+        local db user pass
+        db="$(env_get MYSQL_DATABASE)"
+        user="$(env_get MYSQL_USER)"
+        pass="$(env_get MYSQL_PASSWORD)"
+        # The stock mariadb Docker entrypoint would normally do this from
+        # MYSQL_DATABASE/USER/PASSWORD env vars on first boot - we bypass
+        # that entrypoint entirely, so do it by hand instead. Deleting the
+        # anonymous-user row is required: mariadb-install-db's default
+        # anonymous '' user otherwise intercepts localhost auth ahead of
+        # the named user and every connection gets rejected.
+        apptainer exec instance://mariadb mariadb --skip-ssl -u root <<SQL >"${STATE_DIR}/mariadb-provision.log" 2>&1 \
+            || fail_instance mariadb "database provisioning failed - see ${STATE_DIR}/mariadb-provision.log"
+CREATE DATABASE IF NOT EXISTS \`${db}\`;
+DELETE FROM mysql.global_priv WHERE User='';
+CREATE USER IF NOT EXISTS '${user}'@'localhost' IDENTIFIED BY '${pass}';
+GRANT ALL PRIVILEGES ON \`${db}\`.* TO '${user}'@'localhost';
+CREATE USER IF NOT EXISTS '${user}'@'%' IDENTIFIED BY '${pass}';
+GRANT ALL PRIVILEGES ON \`${db}\`.* TO '${user}'@'%';
+FLUSH PRIVILEGES;
+SQL
+    fi
+}
+
+start_qc_process() {
+    instance_running qc_process && return
+    log "starting qc_process..."
+    clear_stale qc_process
+    mkdir -p "${STATE_DIR}/qc_process_run"
+    apptainer instance start --writable-tmpfs --env-file settings_demo.env \
+        --bind demo/data:/data \
+        --bind "${STATE_DIR}/qc_process_run":/run \
+        sif/qc_process.sif qc_process
+    setsid nohup apptainer exec --env-file settings_demo.env instance://qc_process /setup/cron_with_env.sh \
+        </dev/null >"${STATE_DIR}/qc_process.log" 2>&1 &
+    disown
+}
+
+start_ms_converter() {
+    instance_running ms_converter && return
+    log "starting ms_converter..."
+    clear_stale ms_converter
+    mkdir -p "${STATE_DIR}/ms_converter_run"
+    apptainer instance start --writable-tmpfs --env-file settings_demo.env \
+        --bind demo/data:/data \
+        --bind "${STATE_DIR}/ms_converter_run":/run \
+        sif/qc_converter.sif ms_converter
+    setsid nohup apptainer exec --env-file settings_demo.env instance://ms_converter /setup/cron_with_env.sh \
+        </dev/null >"${STATE_DIR}/ms_converter.log" 2>&1 &
+    disown
+}
+
+start_qc_shiny() {
+    instance_running qc_shiny && return
+    log "starting qc_shiny..."
+    clear_stale qc_shiny
+
+    # shiny-server refuses to start unless `run_as` names a user it can
+    # actually become - without fakeroot the only user we can ever be is
+    # ourselves, so rewrite the image's stock 'shiny' to our own username.
+    printf 'run_as %s;\n\napp_init_timeout 300;\napp_idle_timeout 300;\n\nserver {\n  listen %s;\n\n  location / {\n    app_dir '"'"'/srv/shiny-server/QC4Metabolomics/Shiny_App'"'"';\n    log_dir /var/log/shiny-server;\n  }\n}\n' \
+        "$(whoami)" "$SHINY_PORT" >"${STATE_DIR}/shiny-server.conf"
+
+    # shiny-server resets the environment for each app's R session, so the
+    # app's MYSQL_*/QC4METABOLOMICS_* config has to come in via Renviron.site
+    # instead (this is normally written by the image's own s6 cont-init
+    # script, which /init would run - we skip /init entirely, so do it
+    # ourselves). settings_demo.env is already plain KEY=value, same syntax
+    # Renviron.site uses, so this is just a straight concatenation.
+    {
+        echo "R_LIBS=\${R_LIBS-'/usr/local/lib/R/site-library:/usr/local/lib/R/library'}"
+        cat settings_demo.env
+    } >"${STATE_DIR}/Renviron.site"
+
+    mkdir -p "${STATE_DIR}/qc_shiny_run" "${STATE_DIR}/qc_shiny_logs" "${STATE_DIR}/qc_shiny_lib"
+    apptainer instance start --writable-tmpfs \
+        --bind demo/data:/data \
+        --bind "${STATE_DIR}/qc_shiny_run":/run \
+        --bind "${STATE_DIR}/qc_shiny_logs":/var/log/shiny-server \
+        --bind "${STATE_DIR}/qc_shiny_lib":/var/lib/shiny-server \
+        --bind "${STATE_DIR}/shiny-server.conf":/etc/shiny-server/shiny-server.conf \
+        --bind "${STATE_DIR}/Renviron.site":/usr/local/lib/R/etc/Renviron.site \
+        sif/qc_shiny.sif qc_shiny
+    setsid nohup apptainer exec --env-file settings_demo.env instance://qc_shiny shiny-server \
+        </dev/null >"${STATE_DIR}/qc_shiny.log" 2>&1 &
+    disown
+}
+
+start_db_backup() {
+    instance_running db_backup && return
+    log "starting db_backup..."
+    clear_stale db_backup
+    apptainer instance start --env-file settings_demo.env \
+        --bind backups:/backup sif/db-backup.sif db_backup
+}
+
+# Start any part of the 5-instance stack that isn't already running.
+start_stack() {
+    [ -d "$APP_DIR" ] || die "QC4Metabolomics app dir not found: $APP_DIR"
+    cd "$APP_DIR"
+
+    [ -f settings_demo.env ] || die "settings_demo.env not found in $APP_DIR"
+    local sif
+    for sif in mariadb qc_process qc_shiny qc_converter db-backup; do
+        [ -f "sif/${sif}.sif" ] || die "missing sif/${sif}.sif in $APP_DIR"
+    done
+
+    mkdir -p demo/db demo/data backups
+    mkdir -p "$STATE_DIR"
+
+    start_mariadb
+    start_qc_process
+    start_ms_converter
+    start_qc_shiny
+    start_db_backup
+}
+
+wait_for_shiny() {
+    log "waiting for Shiny UI at ${SHINY_URL} ..."
+    local waited=0
+    until curl -sf -o /dev/null "$SHINY_URL"; do
+        sleep "$POLL_INTERVAL"
+        waited=$((waited + POLL_INTERVAL))
+        [ "$waited" -lt "$SHINY_WAIT_TIMEOUT" ] || fail_instance qc_shiny "Shiny UI did not answer at ${SHINY_URL} within ${SHINY_WAIT_TIMEOUT}s"
+    done
+    log "Shiny UI is up."
+}
+
+open_browser() {
+    if command -v xdg-open >/dev/null 2>&1; then
+        log "opening browser at ${SHINY_URL}"
+        (xdg-open "$SHINY_URL" >/dev/null 2>&1 &)
+    else
+        log "xdg-open not available - open this URL in a browser manually:"
+        echo
+        echo "    ${SHINY_URL}"
+        echo
+    fi
+}
+
+main() {
+    require_cmd apptainer
+    require_cmd curl
+
+    log "checking QC4Metabolomics instance stack..."
+    log "(instance logs, if needed for debugging, land in ${STATE_DIR}/)"
+    start_stack
+    wait_for_shiny
+    open_browser
+}
+
+main "$@"
