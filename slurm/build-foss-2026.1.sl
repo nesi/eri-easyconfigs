@@ -62,8 +62,39 @@
 # the exact self-hosting bug this works around.
 
 set -u
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if [ -n "${SLURM_SUBMIT_DIR:-}" ]; then
+    # Confirmed directly (job 5259737): under `sbatch`, Slurm copies the
+    # submitted script into a SlurmdSpoolDir directory and executes that
+    # copy, not the original file -- so BASH_SOURCE[0] resolves to
+    # /var/spool/slurmd/jobNNNNN/... instead of this repo. Every path this
+    # script derives from BASH_SOURCE then points into the spool dir too,
+    # failing instantly ("mkdir: cannot create directory
+    # '/var/spool/slurmd/slurm': Permission denied", then every TARGETS
+    # entry "No such file or directory"). This is standard Slurm behaviour,
+    # not specific to this cluster or user -- self-locating via
+    # BASH_SOURCE simply does not work for a script run via `sbatch`.
+    # SLURM_SUBMIT_DIR is the directory `sbatch` was invoked from, which
+    # per this repo's own workflow (see README.md) is always the repo
+    # root itself -- i.e. run `sbatch slurm/build-foss-2026.1.sl` from
+    # inside your eri-easyconfigs checkout, not from within slurm/.
+    REPO="${SLURM_SUBMIT_DIR}"
+else
+    # Not running under Slurm (e.g. `bash slurm/build-foss-2026.1.sl`
+    # directly, for interactive testing) -- BASH_SOURCE-based self-location
+    # is reliable in that case.
+    REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
 LOGDIR="${REPO}/slurm/logs"
+
+if [ ! -f "${REPO}/g/GCCcore-15.2.0.eb" ]; then
+    echo "ERROR: '${REPO}' doesn't look like the eri-easyconfigs checkout" \
+         "(no g/GCCcore-15.2.0.eb found there)." >&2
+    echo "SLURM_SUBMIT_DIR='${SLURM_SUBMIT_DIR:-<unset>}' -- if submitted via" \
+         "sbatch, run it from the repo root: cd eri-easyconfigs && sbatch" \
+         "slurm/build-foss-2026.1.sl" >&2
+    exit 1
+fi
 
 # Points at a clone of https://github.com/easybuilders/easybuild-easyconfigs
 # (develop branch), used as EASYBUILD_ROBOT_PATHS by ebinit-2026.sh. Lives
