@@ -77,9 +77,21 @@ UPSTREAM="${UPSTREAM_ECS_CLONE:-/agr/persist/apps/share/upstream-easybuild-easyc
 
 mkdir -p "${LOGDIR}"
 
-# Ordered top-level targets. Each is resolved+built (with all its
+# Ordered top-level targets. Each entry is resolved+built (with all its
 # dependencies) by a single `eb --robot` call. Order matters: each target
 # depends on the previous ones already being installed.
+#
+# An entry can be MORE THAN ONE PATH, space-separated in one string --
+# needed whenever the target's dependency closure includes local-override
+# easyconfigs that sit deeper than the top-level file itself. EASYBUILD_ROBOT_PATHS
+# (set by ebinit-2026.sh) points only at the upstream clone, never this repo
+# (see the easybuild skill's "robot-path strategy" section -- shadowing
+# upstream with this repo's files broke real dependency resolution once
+# already), so any local override not passed explicitly on the command line
+# is invisible to automatic dependency resolution, no matter how it's
+# referenced in the target's own dependency tree. The loop below invokes
+# each entry unquoted specifically so a multi-path entry word-splits into
+# separate `eb` arguments.
 #
 # Update this list as Phase 5 (app migration) easyconfigs are added --
 # append new targets at the end; existing ones are unaffected.
@@ -88,9 +100,13 @@ TARGETS=(
     "${REPO}/g/GCC-15.2.0.eb"
     "${UPSTREAM}/f/foss/foss-2026.1.eb"
     "${REPO}/r/R-4.6.1.eb"
-    # R-4.6.1-foss-2026.1-MPI.eb deliberately excluded here -- paused on an
-    # unfixed LLVM test-suite failure (see SESSION_STATUS.md). Add it back
-    # once that's resolved.
+    # R-4.6.1-foss-2026.1-MPI.eb -- re-enabled once the LLVM test-suite
+    # failure was fixed (l/LLVM-21.1.8-GCCcore-15.2.0.eb, skip_all_tests).
+    # Every local override anywhere in this target's dependency closure
+    # must be listed explicitly here (see comment above) -- both Perl
+    # builds, Perl-bundle-CPAN, Wayland, and LLVM all sit deep in this
+    # tree and none of them are upstream files.
+    "${REPO}/g/GCCcore-15.2.0.eb ${REPO}/g/GCC-15.2.0.eb ${REPO}/b/binutils-2.45.eb ${REPO}/p/Perl-5.42.0-GCCcore-15.2.0.eb ${REPO}/p/Perl-5.42.0.eb ${REPO}/p/Perl-bundle-CPAN-5.42.0-GCCcore-15.2.0.eb ${REPO}/w/Wayland-1.25.0-GCCcore-15.2.0.eb ${REPO}/l/LLVM-21.1.8-GCCcore-15.2.0.eb ${REPO}/r/R-4.6.1-foss-2026.1-MPI.eb"
 )
 
 source /agr/persist/apps/share/ebinit-2026.sh
@@ -115,7 +131,11 @@ clean_stale_locks() {
 }
 
 for target in "${TARGETS[@]}"; do
-    name="$(basename "${target}" .eb)"
+    # A multi-path entry's actual build target is always the LAST path
+    # listed (everything before it is a local override needed somewhere in
+    # its dependency closure) -- name the log after that, not the whole
+    # space-joined string.
+    name="$(basename "${target##* }" .eb)"
     logfile="${LOGDIR}/${name}.log"
 
     echo "=== RESOLVING/BUILDING: ${target} ==="
@@ -123,7 +143,10 @@ for target in "${TARGETS[@]}"; do
 
     clean_stale_locks
 
-    eb --robot --parallel="${SLURM_CPUS_PER_TASK:-10}" "${target}" > "${logfile}" 2>&1
+    # Deliberately unquoted: a multi-path entry must word-split into
+    # separate `eb` arguments (see TARGETS comment above). No path in this
+    # array contains spaces, so this is safe.
+    eb --robot --parallel="${SLURM_CPUS_PER_TASK:-10}" ${target} > "${logfile}" 2>&1
     rc=$?
 
     if [ "${rc}" -eq 0 ]; then
