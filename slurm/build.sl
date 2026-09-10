@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=build-foss-2026.1
+#SBATCH --job-name=build-spam
 #SBATCH --partition=compute
 #SBATCH --cpus-per-task=64
 #SBATCH --mem=64G
