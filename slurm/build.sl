@@ -92,8 +92,28 @@ if [ ! -f "${REPO}/g/GCCcore-15.2.0.eb" ]; then
          "(no g/GCCcore-15.2.0.eb found there)." >&2
     echo "SLURM_SUBMIT_DIR='${SLURM_SUBMIT_DIR:-<unset>}' -- if submitted via" \
          "sbatch, run it from the repo root: cd eri-easyconfigs && sbatch" \
-         "slurm/build-foss-2026.1.sl" >&2
+         "slurm/build.sl" >&2
     exit 1
+fi
+
+# Non-destructive staleness check: a whole restart cycle was once burned
+# because this checkout still had an old commit when submitted -- a local
+# override .eb file had been fixed and pushed, but this clone hadn't
+# pulled it yet, so the SAME failure reappeared and looked like the fix
+# hadn't worked at all. This never touches the working tree (fetch only,
+# no pull/merge) -- it just warns loudly in the log so a stale-clone
+# failure is obviously that, not a mystery.
+if command -v git >/dev/null 2>&1 && [ -d "${REPO}/.git" ]; then
+    git -C "${REPO}" fetch --quiet origin main 2>/dev/null
+    local_rev="$(git -C "${REPO}" rev-parse HEAD 2>/dev/null || true)"
+    remote_rev="$(git -C "${REPO}" rev-parse origin/main 2>/dev/null || true)"
+    if [ -n "${local_rev}" ] && [ -n "${remote_rev}" ] && [ "${local_rev}" != "${remote_rev}" ]; then
+        echo "WARNING: this checkout (${local_rev:0:8}) is behind or diverged from" >&2
+        echo "origin/main (${remote_rev:0:8}). If a local override .eb file was" >&2
+        echo "recently added/fixed elsewhere, 'git pull' here before trusting any" >&2
+        echo "failure this run reports -- it may just be repeating a failure" >&2
+        echo "that's already fixed upstream." >&2
+    fi
 fi
 
 # Points at a clone of https://github.com/easybuilders/easybuild-easyconfigs
@@ -131,14 +151,21 @@ TARGETS=(
     "${REPO}/g/GCC-15.2.0.eb"
     "${UPSTREAM}/f/foss/foss-2026.1.eb"
     "${REPO}/r/R-4.6.1.eb"
-    # R-4.6.1-foss-2026.1-MPI.eb -- re-enabled once the LLVM test-suite
-    # failure was fixed (l/LLVM-21.1.8-GCCcore-15.2.0.eb, skip_all_tests).
-    # Every local override anywhere in this target's dependency closure
-    # must be listed explicitly here (see comment above) -- both Perl
-    # builds, Perl-bundle-CPAN, Wayland, LLVM, groff, gperf, and nettle
-    # (all three: GNU mirror timeout, same class of fix as M4-1.4.20.eb)
-    # all sit deep in this tree and none of them are upstream files.
-    "${REPO}/g/GCCcore-15.2.0.eb ${REPO}/g/GCC-15.2.0.eb ${REPO}/b/binutils-2.45.eb ${REPO}/p/Perl-5.42.0-GCCcore-15.2.0.eb ${REPO}/p/Perl-5.42.0.eb ${REPO}/p/Perl-bundle-CPAN-5.42.0-GCCcore-15.2.0.eb ${REPO}/w/Wayland-1.25.0-GCCcore-15.2.0.eb ${REPO}/l/LLVM-21.1.8-GCCcore-15.2.0.eb ${REPO}/g/groff-1.24.1-GCCcore-15.2.0.eb ${REPO}/g/gperf-3.3-GCCcore-15.2.0.eb ${REPO}/n/nettle-4.0-GCCcore-15.2.0.eb ${REPO}/r/R-4.6.1-foss-2026.1-MPI.eb"
+    # R-4.6.1-gfbf-2026.1.eb -- the "full R" build, MPI dropped deliberately
+    # (per explicit request): Rmpi/snow/snowfall/doMPI removed, toolchain
+    # switched from foss (chosen only to get OpenMPI) to gfbf (GCC +
+    # FlexiBLAS + FFTW, no MPI/ScaLAPACK) since nothing here needs MPI
+    # anymore. R's OWN dependencies (X11, OpenGL, cairo, etc.) are
+    # completely unrelated to the toolchain's MPI-ness, so this still
+    # needs the exact same graphics-stack local overrides as the retired
+    # MPI variant did -- both Perl builds, Perl-bundle-CPAN, Wayland,
+    # LLVM, groff, gperf, and nettle (the latter three: GNU mirror
+    # timeout, same class of fix as M4-1.4.20.eb) all sit deep in this
+    # tree and none of them are upstream files. gfbf-2026.1 itself is a
+    # pure upstream file with no local divergence -- its own deps (GCC,
+    # FlexiBLAS, FFTW) are already built as part of foss-2026.1, so it
+    # resolves via the robot path with nothing extra to pass explicitly.
+    "${REPO}/g/GCCcore-15.2.0.eb ${REPO}/g/GCC-15.2.0.eb ${REPO}/b/binutils-2.45.eb ${REPO}/p/Perl-5.42.0-GCCcore-15.2.0.eb ${REPO}/p/Perl-5.42.0.eb ${REPO}/p/Perl-bundle-CPAN-5.42.0-GCCcore-15.2.0.eb ${REPO}/w/Wayland-1.25.0-GCCcore-15.2.0.eb ${REPO}/l/LLVM-21.1.8-GCCcore-15.2.0.eb ${REPO}/g/groff-1.24.1-GCCcore-15.2.0.eb ${REPO}/g/gperf-3.3-GCCcore-15.2.0.eb ${REPO}/n/nettle-4.0-GCCcore-15.2.0.eb ${REPO}/r/R-4.6.1-gfbf-2026.1.eb"
 )
 
 source /agr/persist/apps/share/ebinit-2026.sh
