@@ -135,9 +135,10 @@ TARGETS=(
     # failure was fixed (l/LLVM-21.1.8-GCCcore-15.2.0.eb, skip_all_tests).
     # Every local override anywhere in this target's dependency closure
     # must be listed explicitly here (see comment above) -- both Perl
-    # builds, Perl-bundle-CPAN, Wayland, and LLVM all sit deep in this
+    # builds, Perl-bundle-CPAN, Wayland, LLVM, and groff (GNU mirror
+    # timeout, same class of fix as M4-1.4.20.eb) all sit deep in this
     # tree and none of them are upstream files.
-    "${REPO}/g/GCCcore-15.2.0.eb ${REPO}/g/GCC-15.2.0.eb ${REPO}/b/binutils-2.45.eb ${REPO}/p/Perl-5.42.0-GCCcore-15.2.0.eb ${REPO}/p/Perl-5.42.0.eb ${REPO}/p/Perl-bundle-CPAN-5.42.0-GCCcore-15.2.0.eb ${REPO}/w/Wayland-1.25.0-GCCcore-15.2.0.eb ${REPO}/l/LLVM-21.1.8-GCCcore-15.2.0.eb ${REPO}/r/R-4.6.1-foss-2026.1-MPI.eb"
+    "${REPO}/g/GCCcore-15.2.0.eb ${REPO}/g/GCC-15.2.0.eb ${REPO}/b/binutils-2.45.eb ${REPO}/p/Perl-5.42.0-GCCcore-15.2.0.eb ${REPO}/p/Perl-5.42.0.eb ${REPO}/p/Perl-bundle-CPAN-5.42.0-GCCcore-15.2.0.eb ${REPO}/w/Wayland-1.25.0-GCCcore-15.2.0.eb ${REPO}/l/LLVM-21.1.8-GCCcore-15.2.0.eb ${REPO}/g/groff-1.24.1-GCCcore-15.2.0.eb ${REPO}/r/R-4.6.1-foss-2026.1-MPI.eb"
 )
 
 source /agr/persist/apps/share/ebinit-2026.sh
