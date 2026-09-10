@@ -151,21 +151,22 @@ TARGETS=(
     "${REPO}/g/GCC-15.2.0.eb"
     "${UPSTREAM}/f/foss/foss-2026.1.eb"
     "${REPO}/r/R-4.6.1.eb"
-    # R-4.6.1-gfbf-2026.1.eb -- the "full R" build, MPI dropped deliberately
-    # (per explicit request): Rmpi/snow/snowfall/doMPI removed, toolchain
-    # switched from foss (chosen only to get OpenMPI) to gfbf (GCC +
-    # FlexiBLAS + FFTW, no MPI/ScaLAPACK) since nothing here needs MPI
-    # anymore. R's OWN dependencies (X11, OpenGL, cairo, etc.) are
-    # completely unrelated to the toolchain's MPI-ness, so this still
-    # needs the exact same graphics-stack local overrides as the retired
-    # MPI variant did -- both Perl builds, Perl-bundle-CPAN, Wayland,
-    # LLVM, groff, gperf, and nettle (the latter three: GNU mirror
-    # timeout, same class of fix as M4-1.4.20.eb) all sit deep in this
-    # tree and none of them are upstream files. gfbf-2026.1 itself is a
-    # pure upstream file with no local divergence -- its own deps (GCC,
-    # FlexiBLAS, FFTW) are already built as part of foss-2026.1, so it
-    # resolves via the robot path with nothing extra to pass explicitly.
-    "${REPO}/g/GCCcore-15.2.0.eb ${REPO}/g/GCC-15.2.0.eb ${REPO}/b/binutils-2.45.eb ${REPO}/p/Perl-5.42.0-GCCcore-15.2.0.eb ${REPO}/p/Perl-5.42.0.eb ${REPO}/p/Perl-bundle-CPAN-5.42.0-GCCcore-15.2.0.eb ${REPO}/w/Wayland-1.25.0-GCCcore-15.2.0.eb ${REPO}/l/LLVM-21.1.8-GCCcore-15.2.0.eb ${REPO}/g/groff-1.24.1-GCCcore-15.2.0.eb ${REPO}/g/gperf-3.3-GCCcore-15.2.0.eb ${REPO}/n/nettle-4.0-GCCcore-15.2.0.eb ${REPO}/r/R-4.6.1-gfbf-2026.1.eb"
+    # R-4.6.1-foss-2026.1.eb -- the "one R with everything" build: full
+    # tidyverse (matching rocker/geospatial's own package set), the sf/terra
+    # geospatial stack via native GDAL/GEOS/PROJ, and Rmpi/snow/doMPI --
+    # replacing both the earlier -MPI-only file and the short-lived gfbf
+    # (no-MPI) variant. Back on foss (not gfbf) because GDAL's only upstream
+    # easyconfig for this generation needs netCDF, which is foss/gompi-only
+    # here -- since that forces foss anyway, MPI is included again too.
+    # Every local override anywhere in this dependency closure must still
+    # be listed explicitly -- both Perl builds, Perl-bundle-CPAN, Wayland,
+    # LLVM, groff, gperf, and nettle (the latter three: GNU mirror timeout,
+    # same class of fix as M4-1.4.20.eb) all sit deep in this tree and none
+    # of them are upstream files. GDAL/GEOS/PROJ/libgeotiff/UDUNITS are all
+    # pure upstream files with no local divergence -- their own deps (GCC,
+    # OpenMPI, netCDF, etc.) are already built as part of foss-2026.1, so
+    # they resolve via the robot path with nothing extra to pass explicitly.
+    "${REPO}/g/GCCcore-15.2.0.eb ${REPO}/g/GCC-15.2.0.eb ${REPO}/b/binutils-2.45.eb ${REPO}/p/Perl-5.42.0-GCCcore-15.2.0.eb ${REPO}/p/Perl-5.42.0.eb ${REPO}/p/Perl-bundle-CPAN-5.42.0-GCCcore-15.2.0.eb ${REPO}/w/Wayland-1.25.0-GCCcore-15.2.0.eb ${REPO}/l/LLVM-21.1.8-GCCcore-15.2.0.eb ${REPO}/g/groff-1.24.1-GCCcore-15.2.0.eb ${REPO}/g/gperf-3.3-GCCcore-15.2.0.eb ${REPO}/n/nettle-4.0-GCCcore-15.2.0.eb ${REPO}/r/R-4.6.1-foss-2026.1.eb"
 )
 
 source /agr/persist/apps/share/ebinit-2026.sh

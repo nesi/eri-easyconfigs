@@ -7,11 +7,14 @@ description = """R is a free software environment for statistical computing
 
 toolchain = {'name': 'foss', 'version': '2026.1'}
 
-# HPC-native, cluster-parallel build carrying Rmpi/snow/doMPI, which
-# rocker/geospatial (see R-4.6.1.eb) does not provide. Built on foss
-# rather than upstream's gfbf specifically to get OpenMPI 5.0.10.
-versionsuffix = '-MPI'
-
+# The "one R with everything" build: full tidyverse (matching rocker/geospatial's
+# own package set), the geospatial stack (sf/terra via native GDAL/GEOS/PROJ),
+# and Rmpi/snow/doMPI cluster-parallel support -- all in a single native module,
+# replacing both the earlier -MPI-only variant and the short-lived gfbf (no-MPI)
+# variant. Toolchain is foss rather than gfbf specifically because GDAL's only
+# upstream easyconfig for this generation (GDAL-3.13.0-foss-2026.1.eb) needs
+# netCDF, which is foss/gompi-only here -- since that forces foss anyway,
+# Rmpi/snow/snowfall/doMPI are included too rather than left out for no reason.
 source_urls = ['https://cloud.r-project.org/src/base/R-%(version_major)s']
 sources = [SOURCE_TAR_GZ]
 checksums = ['4da6e61d2c0aac5f14a2e7e432cb5fcc269efe83da4293050ba7f03dff4e2cf4']
@@ -43,6 +46,14 @@ dependencies = [
     ('Tk', '9.0.3'),
     ('HarfBuzz', '14.2.0'),
     ('FriBidi', '1.0.16'),
+    # Geospatial stack, for sf/terra below. GDAL is only available upstream
+    # for this generation on foss (needs netCDF); GEOS/PROJ/libgeotiff/UDUNITS
+    # all exist upstream regardless of toolchain choice.
+    ('GDAL', '3.13.0'),
+    ('GEOS', '3.14.1'),
+    ('PROJ', '9.8.1'),
+    ('libgeotiff', '1.7.4'),
+    ('UDUNITS', '2.2.28'),
 ]
 
 # Some R extensions (mclust, quantreg, waveslim for example) require the math library (-lm) to avoid undefined symbols.
@@ -64,7 +75,8 @@ exts_default_options = {
 }
 
 # !! order of packages is important !!
-# packages updated on 1 July 2026
+# packages updated on 1 July 2026; tidyverse/geospatial/MPI blocks appended
+# 11 September 2026 -- versions/checksums pulled live from CRAN that day.
 exts_list = [
     'base',
     'compiler',
@@ -375,20 +387,158 @@ exts_list = [
         'checksums': ['f677dd7d527f0e2184818edfba9bb45668e2985b76b4f5517c7ad6cff42317a2'],
     }),
 
-    # MPI / cluster-parallel extensions, not part of upstream's R.eb (rocker
-    # images don't carry these either -- this is the reason this -MPI variant
-    # exists at all). Order matches eRI's proven-working R-4.4.x builds:
-    # Rmpi and snow(+patch) first since snow's .onLoad() probes for Rmpi at
-    # load time; foreach's own dependencies (iterators, codetools) before
-    # the do* adapters that wrap it.
+    # Full tidyverse (matching rocker/geospatial's own package set), added to
+    # make this genuinely "one R with everything" rather than just the
+    # low-level building blocks the base list above already carried.
+    # Ordered so every package's own dependencies (checked against each
+    # package's live CRAN DESCRIPTION on 2026-09-11) appear earlier in this
+    # list or in the base block above.
+    ('generics', '0.1.4', {
+        'checksums': ['bbe95a097792d38fc3b7e677738af1b95b66ea5e5017e33b8beac6a6088d0801'],
+    }),
+    ('tidyselect', '1.2.1', {
+        'checksums': ['169e97ba0bbfbcdf4a80534322751f87a04370310c40e27f04aac6525d45903c'],
+    }),
+    ('gtable', '0.3.6', {
+        'checksums': ['d305a5fa11278b649d2d8edc5288bf28009be888a42be58ff8714018e49de0ef'],
+    }),
+    ('isoband', '0.3.0', {
+        'checksums': ['fe8d3d58ca75bbee32f389152ac0058818f3f76f09c9867949531de7abc424ac'],
+    }),
+    ('S7', '0.2.2', {
+        'checksums': ['6f33245dde05b74265b1c4d379e034bc3a8923d41e7b52e6e75a75ce97d42af7'],
+    }),
+    ('farver', '2.1.2', {
+        'checksums': ['528823b95daab4566137711f1c842027a952bea1b2ae6ff098e2ca512b17fe25'],
+    }),
+    ('labeling', '0.4.3', {
+        'checksums': ['c62f4fc2cc74377d7055903c5f1913b7295f7587456fe468592738a483e264f2'],
+    }),
+    ('RColorBrewer', '1.1-3', {
+        'checksums': ['4f42f5423c45688b39f492c7892d93f37b4541831c8ffb140364d2bd89031ac0'],
+    }),
+    ('viridisLite', '0.4.3', {
+        'checksums': ['433be9bde66234dc76301fb4ffbbc9fc74bab5c14f4548d8ef2fc0065e121ef5'],
+    }),
+    ('scales', '1.4.0', {
+        'checksums': ['d55ef5f08c92652d7a95cfa27584024723ab17873f1b2577dd488cb7c883ceee'],
+    }),
+    ('ggplot2', '4.0.3', {
+        'checksums': ['690224bd61642b6222adb109470988e87f786e193cca77a15c0923cf9da73fa5'],
+    }),
+    ('dplyr', '1.2.1', {
+        'checksums': ['18d66fe2f24cda8b619c177326d39dd015229ab99695fa67d3fa31e4569390e0'],
+    }),
+    ('tidyr', '1.3.2', {
+        'checksums': ['04c0e6daf0af682af73763a42c027d7171761cdbdbf9ff7a77a0e421343d665a'],
+    }),
+    ('bit', '4.6.0', {
+        'checksums': ['48fe21c5d04c7b724d695eeb60074395c0c631a7fb234e2075de92471445de08'],
+    }),
+    ('bit64', '4.8.6', {
+        'checksums': ['a5fcec17ba772a561a7375ca8fd966bdd5f20dd4e89b4dae07d7da933d554b45'],
+    }),
+    ('tzdb', '0.5.0', {
+        'checksums': ['380d5237dbfa722fddb7d1d9ad8520a2b26331dbbb77d51850ded332fcf347db'],
+    }),
+    ('hms', '1.1.4', {
+        'checksums': ['efc525f797b62b3740d06c6fa8202593ab5aa4fc1edeefb76b6eb9be89e87b94'],
+    }),
+    ('progress', '1.2.3', {
+        'checksums': ['ea2b079b894de85c3ab12088c9c52aec06432245047a961d5b4b8aa6889f9276'],
+    }),
+    ('vroom', '1.7.1', {
+        'checksums': ['7d64f6227fdac3ee64c506654bb1d919e407f92fc2d0d5a2398dbb83001e8790'],
+    }),
+    ('readr', '2.2.0', {
+        'checksums': ['8025d797c183e12ad5ebe4af891dbcb5a8e9bd53aa4765006eb25a07f9a9f473'],
+    }),
+    ('forcats', '1.0.1', {
+        'checksums': ['1de46b83b7038a293e612775197b7ffe47bd079cd2385aa7c65e98171bbd3605'],
+    }),
+    ('timechange', '0.4.0', {
+        'checksums': ['6dc8ff9d339d3c4cff7ddf3800383f3e94f41c021f6c7bacccf971e187f73feb'],
+    }),
+    ('lubridate', '1.9.5', {
+        'checksums': ['0bc5d10e5a34285d4f9e9c572c058c386b9e1515d8faebc1496b2680138280a8'],
+    }),
+    ('blob', '1.3.0', {
+        'checksums': ['d4d2aeb8d17683bbfc256a7541e282af9663a752988a21a6ba72a4ab268c7331'],
+    }),
+    ('DBI', '1.3.0', {
+        'checksums': ['13def8e90cbe41205a0dfcf585a6a7ea79ce10d45969789e82613c7ce3d5fb18'],
+    }),
+    ('dbplyr', '2.6.0', {
+        'checksums': ['3672daf73f7f0238a2c547dce5d4fb31e50235bca796c710d6f7caf49c212bd8'],
+    }),
+    ('data.table', '1.18.6.1', {
+        'checksums': ['f2846f45fbbdfe886f05fa7489314a56ae0f3352ae5bc1070b0cdd4f44ffa1f5'],
+    }),
+    ('dtplyr', '1.3.3', {
+        'checksums': ['cbcf0671dd551a0ceacc8f88d83c0bb6cdc967d0f817dc4c211f78fdb536b188'],
+    }),
+    ('backports', '1.5.1', {
+        'checksums': ['b8eeeabe3c27e1486f43e0b18dae57f0e870dd7c6979d3668df76bf0d4735bad'],
+    }),
+    ('broom', '1.0.13', {
+        'checksums': ['f946601f57b4d90e7d2ea88c55c1516dacb8220cb12a980ba1e0fa1832320f61'],
+    }),
+    ('conflicted', '1.2.0', {
+        'checksums': ['c99b86bb52da3e7d1f4d96d70c77304d0434db5bd906edd8d743e89ac9223088'],
+    }),
+    ('modelr', '0.1.11', {
+        'checksums': ['94ebd506e9ccf3bf25318be6a182f8f89c3669a77b41864a0b9dbcc1d4337bd3'],
+    }),
+    ('rematch', '2.0.0', {
+        'checksums': ['15daf7bf2907aef8503635bc8631fce9fd75248a1fc2496825588c4bdf785c26'],
+    }),
+    ('cellranger', '1.1.0', {
+        'checksums': ['5d38f288c752bbb9cea6ff830b8388bdd65a8571fd82d8d96064586bd588cf99'],
+    }),
+    ('readxl', '1.5.0', {
+        'checksums': ['908347d27f455ba6f42dc0b0619656166cfd916b3e2cffee4eff867ce5014ce7'],
+    }),
+    ('uuid', '1.2-2', {
+        'checksums': ['b1b73b87180d7b15095e6b33092ccf9dbd7ed3177791682711b8151ebbe9025f'],
+    }),
+    ('ids', '1.0.1', {
+        'checksums': ['b6212a186063c23116c5cbd3cca65dbb8977dd737261e4526ebee8f64852cfe8'],
+    }),
+    ('gargle', '1.6.1', {
+        'checksums': ['0c72c60e5e448ad9db6d4f224654afa1a1d459d43f31c623c8117eba29850e5c'],
+    }),
+    ('googledrive', '2.1.2', {
+        'checksums': ['3809ea4d8333eb80e6ca4e780f198014f65b21c3cf4ec95a63aeb6772c8d94aa'],
+    }),
+    ('googlesheets4', '1.1.2', {
+        'checksums': ['7ba9d5dd051a405a7af6d41d5fc12bdec8474f9fb1482ef32eb79aa6914fadd9'],
+    }),
+    ('haven', '2.5.5', {
+        'checksums': ['9482cd9c3760e1838acf687235317fed97fa6bf79219d3216f0ea447d4b1c9a5'],
+    }),
+    ('selectr', '0.6-0', {
+        'checksums': ['b877dfd9cc8b7d9afda1be9e45dfafc942e14b4279a430e5f8f75325c05eddd9'],
+    }),
+    ('rvest', '1.0.5', {
+        'checksums': ['1e7c34a0b4467887195b1cd66388919989e82ca096d08df283c675d87e53bc00'],
+    }),
+    ('reprex', '2.1.1', {
+        'checksums': ['c860368cbc7ef90ea786fb61ab6fa42cd89b5258be48652abc20ad414001879c'],
+    }),
+    ('tidyverse', '2.0.0', {
+        'checksums': ['3d3c2d135056333247d309d1c2cc98cc0d87e2c781f4c6fbceab28d28c0728e5'],
+    }),
+
+    # MPI / cluster-parallel extensions. Order matches eRI's proven-working
+    # R-4.4.x builds: Rmpi and snow(+patch) first since snow's .onLoad()
+    # probes for Rmpi at load time; foreach's own dependencies (iterators,
+    # codetools) before the do* adapters that wrap it.
     ('Rmpi', '0.7-1', {
         'checksums': ['17dae27dea9317aacabc2255dfcf2538fb3195472cedd521256ced9a20dd2dc1'],
     }),
     ('snow', '0.4-4', {
         # toolchain-agnostic: auto-loads Rmpi and attaches to an MPI cluster
-        # in .onLoad() when running under mpirun/srun. Recovered from this
-        # repo's own git history (commit 0085f4c) after an unrelated mass
-        # file deletion (8fa9968) wiped it along with ~200 other files.
+        # in .onLoad() when running under mpirun/srun.
         'patches': ['R-snow-4b-MPI.patch'],
         'checksums': [
             '84587f46f222a96f3e2fde10ad6ec6ddbd878f4e917cd926d632f61a87db13c9',
@@ -415,6 +565,41 @@ exts_list = [
     }),
     ('doMC', '1.3.8', {
         'checksums': ['b2186f851448251ae6af5d14b9e3e7f9221f90887e5f8de6a68c91caf16619a3'],
+    }),
+
+    # Geospatial stack (sf/terra), completing rocker/geospatial's package set
+    # natively. class/KernSmooth are normally bundled as R's own "recommended"
+    # packages, but --with-recommended-packages=no above means they need to
+    # be installed explicitly like any other CRAN extension.
+    ('wk', '0.9.5', {
+        'checksums': ['b720282890f8d322ff8217bd857bab8f5549343ea2a635a3c2ada63ce1206aed'],
+    }),
+    ('proxy', '0.4-29', {
+        'checksums': ['c6eb0e36ef2eecb1b8564f0188ca8d2c91a80865c86698386a7b5d5baa92c35b'],
+    }),
+    ('class', '7.3-24', {
+        'checksums': ['e8c66e57e3f4214ced6fff135a0d9b55f7bd7d6c947b219063de57b275c507e1'],
+    }),
+    ('KernSmooth', '2.23-27', {
+        'checksums': ['d501066a63959bee97d1ce7c556cb90862b3261fa6fc1c3cf8e5b2cdea2cc70d'],
+    }),
+    ('e1071', '1.7-17', {
+        'checksums': ['6debc371ad478c2aa6de1f6510e254e80e797de4974b855f63b35509a3c2ac87'],
+    }),
+    ('classInt', '0.4-11', {
+        'checksums': ['8d366844cf7f951cc5b65423c3ccf50ebc3c11cf9d1fc90f8208e7d869c5d0a6'],
+    }),
+    ('s2', '1.1.12', {
+        'checksums': ['ec3cebd5f9dcacf7398a0b7a3c1e41d57f9cacfb1c6503b0e6acf19fcfa5c41e'],
+    }),
+    ('units', '1.0-1', {
+        'checksums': ['09ec534a9d4ab7f171809cad1788074452f9b30620d5f54d959d799f5952fbf3'],
+    }),
+    ('sf', '1.1-2', {
+        'checksums': ['d981586c9999173a1087ab90dd93c1972cc36edae5d0d0a7cd3f4aec2838855b'],
+    }),
+    ('terra', '1.9-50', {
+        'checksums': ['377472faea33107c727f6e137f4df2d9f2e7112eef696250305ae51642c609aa'],
     }),
 ]
 
