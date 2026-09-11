@@ -533,8 +533,16 @@ exts_list = [
     # R-4.4.x builds: Rmpi and snow(+patch) first since snow's .onLoad()
     # probes for Rmpi at load time; foreach's own dependencies (iterators,
     # codetools) before the do* adapters that wrap it.
-    ('Rmpi', '0.7-1', {
-        'checksums': ['17dae27dea9317aacabc2255dfcf2538fb3195472cedd521256ced9a20dd2dc1'],
+    # Rmpi 0.7-1 fails to compile against R >= ~4.4's headers: R removed the
+    # legacy S-compatibility Calloc/Free macros (R_ext/RS.h now only defines
+    # R_Calloc/R_Free), and Rmpi.c's 2023-era source still calls the old
+    # names directly ("expected expression before 'int'" at every
+    # Calloc(n, type) call site -- confirmed by direct reproduction).
+    # 0.7-3.4 (current CRAN, April 2026) already uses R_Calloc/R_Free
+    # throughout -- verified directly against its actual source, not just
+    # its changelog -- so this is a version bump, not a patch.
+    ('Rmpi', '0.7-3.4', {
+        'checksums': ['12096db54761e8b3337955b4f3ddb785d1ded2a1cce0b58e50e63e0bc659d464'],
     }),
     ('snow', '0.4-4', {
         # toolchain-agnostic: auto-loads Rmpi and attaches to an MPI cluster
